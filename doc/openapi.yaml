@@ -1,132 +1,522 @@
-openapi: "3.0.2"
+openapi: 3.0.2
 info:
-  title: "todoAPI"
-  version: "1.0"
+  title: To Dos API
+  version: 1.0.0
 servers:
   - url: https://api.server.test/v1
 paths:
-  /todo:
+  /todos:
     get:
+      tags: 
+        - Todos
       summary: Get all todos
+      description: > 
+        Returns a list of details for all todos
+      operationId: getTodos
       responses:
-        "200":
-          description: Success
+        200:
+          description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/todo"
-
-  /todo/{id}:
-    get:
-      summary: Get todo by id
-      parameters:
-        - in: path
-          name: todoId
-          required: true
-          description: The ID of the todo to return
-          schema:
-            type: object
-            properties:
-              id:
-                type: integer
-                format: int64
-                example: 2
-              title:
-                type: string
-              task:
-                type: string
-              completed:
-                type: boolean
+              examples:
+                normal:
+                  summary: Normal
+                  value:
+                    - id: 1
+                      title: Start chores
+                      description: Put dishes in dishwasher
+                      done: false
+                      user: 
+                        id: 1
+                        email: jeff@abc.com
+                        userName: jeff123
+                        firstName: Jeff
+                        lastName: Green
+                    - id: 2
+                      title: Go to store
+                      description: Buy bread and milk
+                      done: false
+                      user: 
+                        id: 1
+                        email: jeff@abc.com
+                        userName: jeff123
+                        firstName: Jeff
+                        lastName: Green
+                    - id: 3
+                      title: Dentist appointment
+                      description: Go to dentist appointment at 2
+                      done: false
+                      user: 
+                        id: 1
+                        email: jeff@abc.com
+                        userName: jeff123
+                        firstName: Jeff
+                        lastName: Green
+                empty:
+                  summary: Empty
+                  value: []
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+          
+    post:
+      tags: 
+        - Todos
+      summary: Creates a new todo
+      description: >
+        Creates a new todo item and adds it to the list.
+      operationId: createTodos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                userId:
+                  type: integer
+              required:
+                - title
       responses:
-        "200":
-          description: Success
+        201:
+          description: Successfully created todo 
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/todo"
+                type: object
+                properties:
+                  id:
+                    type: integer
+        default:
+          $ref: "#/components/responses/UnexpectedError"
 
-        "404":
-          description: Todo not found
-    post:
-      summary: Create a new todo
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/todo"
-
-      responses:
-        "201":
-          description: Created
-        "404":
-          description: Todo not found
-    put:
-      summary: Updates todo by id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/todo"
+  /todos/{id}:
+    get:
+      tags:
+        - Todos
+      summary: Get todo by id
+      description: >
+        Returns a todo with the corresponding id
+      operationId: getTodo
       parameters:
         - in: path
-          name: todoId
+          name: id
+          required: true
+          description: The ID of the todo to return
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 2
+                  title:
+                    type: string
+                    example: Read a book
+                  description:
+                    type: string
+                    example: Read 10 pages out of book
+                  done:
+                    type: boolean
+                    example: false
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      email:
+                        type: string
+                      userName:
+                        type: string
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+              examples:
+                normal:
+                  summary: Normal
+                  value:
+                    id: 1
+                    title: Start chores
+                    description: Put dishes in dishwasher
+                    done: false
+                    user: 
+                      id: 1
+                      email: jeff@abc.com
+                      userName: jeff123
+                      firstName: Jeff
+                      lastName: Green
+        404:
+          $ref: "#/components/responses/NotFoundError"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+  
+    put:
+      tags:
+        - Todos
+      summary: Updates todo by id
+      description: >
+        Updates todo item with the corresponding id
+      operationId: updateTodo
+      parameters:
+        - in: path
+          name: id
           required: true
           description: Id of the todo that needs to be updated
           schema:
-            type: object
-            items:
-              $ref: "#/components/schemas/todo"
-
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                done:
+                  type: boolean
+                userId:
+                  type: integer
       responses:
-        "201":
-          description: Todo updated
-        "404":
-          description: Unable to find todo to update.
+        201:
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 2
+                  title:
+                    type: string
+                    example: Read a book
+                  description:
+                    type: string
+                    example: Read 10 pages out of book
+                  done:
+                    type: boolean
+                    example: false
+                  userId:
+                    type: integer
+                    example: 1
+        404:
+          $ref: "#/components/responses/NotFoundError"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
 
     delete:
+      tags:
+        - Todos
       summary: Delete todo by id
+      description: >
+        Deletes todo item with the corresponding id
+      operationId: deleteTodo
       parameters:
         - in: path
-          name: todoId
+          name: id
           required: true
           description: Id of the todo that needs to be updated
           schema:
-            type: object
-            items:
-              $ref: "#/components/schemas/todo"
+            type: integer
 
       responses:
-        "204":
+        204:
           description: Todo deleted
-        "404":
-          description: Todo not found
+        404:
+          $ref: "#/components/responses/NotFoundError"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+  
+  /users:
+    get:
+      tags: 
+        - Users
+      summary: Get all users
+      description: > 
+        Returns a list of users
+      operationId: getUsers
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/user"
+              examples:
+                normal:
+                  summary: Normal
+                  value:
+                    - id: 1
+                      email: mj@123.com
+                      userName: mj123
+                      firstName: M
+                      lastName: J
+                    - id: 2
+                      email: laquan@yahoo.com
+                      userName: quan123
+                      firstName: Quan
+                      lastName: New
+                    - id: 3
+                      email: abc@123.com
+                      userName: abc123
+                      firstName: Ab
+                      lastName: C
+                empty:
+                  summary: Empty
+                  value: []
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+          
+    post:
+      tags: 
+        - Users
+      summary: Create a new User
+      description: > 
+        Creates a new user
+      operationId: createUsers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                userName:
+                  type: string
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+              required:
+                - email
+                - userName
+                - firstName
+                - lastName
+      responses:
+        201:
+          description: Successfully created user 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+        400:
+          $ref: "#/components/responses/BadRequestError"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+          
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get user by id
+      description: >
+        Returns user with the corresponding id
+      operationId: getUser
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the user to return
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 2
+                  email:
+                    type: string
+                    example: laquan@abc.com
+                  userName:
+                    type: string
+                    example: laquan123
+                  firstName:
+                    type: string
+                    example: Laquan
+                  lastName:
+                    type: string
+                    example: Newell
+        404:
+          $ref: "#/components/responses/NotFoundError"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+  
+    put:
+      tags:
+      - Users
+      summary: Updates user by id
+      description: >
+        Updates user item with the corresponding id
+      operationId: updateUser
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id of the user that needs to be updated
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                userName:
+                  type: string
+                firstName:
+                  type: string
+                lastName: 
+                  type: string
+      responses:
+        201:
+          description: Successfully updated
+        400:
+          $ref: "#/components/responses/BadRequestError"
+        404:
+          $ref: "#/components/responses/NotFoundError"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
 
+    delete:
+      tags:
+        - Users
+      summary: Delete user by id
+      description: >
+        Deletes user with the corresponding id
+      operationId: deleteUser
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id of the user that needs to be updated
+          schema:
+            type: integer
+      responses:
+        204:
+          description: User deleted
+        404:
+          $ref: "#/components/responses/NotFoundError"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+        
 components:
   schemas:
-    users:
+    user:
       type: object
       properties:
         id:
           type: integer
+          description: The id that user will be assigned
         email:
           type: string
-        fname:
+          description: Email address provided by the user
+        userName:
           type: string
-        lname:
+          description: Unique username created by user
+          
+        firstName: 
           type: string
+          description: The users first name
+        lastName: 
+          type: string
+          description: The users last name
 
     todo:
       type: object
       properties:
         id:
           type: integer
+          description: The id that the todo will be assigned
         title:
           type: string
-        task:
+          description: The title or main heading of the Todo
+        description:
           type: string
-        status:
+          description: Additional information relating to the todo
+        done:
           type: boolean
+          description: Represents if the todo is completed or not
+          default: false
+        user:
+          $ref: "#/components/schemas/user"
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Status code to be returned
+        message:
+          type: string
+          description: Describes the error returned
+  responses:
+    NotFoundError:
+      description: The requested resource could not be found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            normal:
+              summary: Normal
+              value:
+                code: "NotFound"
+                message: "Unable to find the requested resource"
+    UnexpectedError:
+      description: An unexpected error has occurred
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            normal:
+              summary: Normal
+              value:
+                code: "Internal"
+                message: "An unexpected error has occurred please try again later"
+    BadRequestError:
+     description: The server could not understand the request
+     content:
+       application/json:
+         schema:
+           $ref: "#/components/schemas/Error"
+         examples:
+           normal:
+             summary: Normal
+             value:
+               code: "BadRequest"
+               message: "Invalid request"
+    
