@@ -1,0 +1,9 @@
+### Test Results ###
+**/test/**/.results
+
+### Visual Studio Code ###
+.vscode
+
+### REST Client ###
+.restclient
+*.http

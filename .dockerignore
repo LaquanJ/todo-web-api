@@ -1,0 +1,9 @@
+### Git ###
+.git
+
+### Docker ###
+*Dockerfile*
+*docker-compose*
+
+### Visual Studio Code ###
+.vscode
