@@ -13,11 +13,11 @@ export default async function routes(fastify, options) {
   fastify.route({
     method: 'GET',
     url: '/todos',
-    preValidation: [fastify.authenticate, fastify.authorize],
-    config: {
-      validScopes: ['Todos.Read', 'Todos.Manage'],
-      validRoles: ['Administrator', 'Client']
-    },
+    // preValidation: [fastify.authenticate, fastify.authorize],
+    // config: {
+    //   validScopes: ['Todos.Read', 'Todos.Manage'],
+    //   validRoles: ['Administrator', 'Client']
+    // },
     handler: getTodos
   });
 }
