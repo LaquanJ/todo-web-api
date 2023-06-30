@@ -1,26 +1,37 @@
-'use strict';
-
+"use strict";
+// todos table
 export function up(knex) {
-  return knex.schema
-  // .createTable('todos', (table) => {
-  //   table.increments(); // id
-  //   table.integer('app_id').notNullable();
-  //   table.string('client_number').notNullable();
-  //   table.string('client_group_id').notNullable();
-  //   table.string('project_name').notNullable();
-  //   table.string('project_number').notNullable();
-  //   table.string('category').notNullable();
-  //   table.string('item_name').notNullable();
-  //   table.string('item_url').notNullable();
-  //   table.string('due_date');
-  //   table.string('status');
-  //   table.string('created_by').notNullable();
-  //   table.string('updated_by').notNullable();
-  //   table.timestamps(false, true); // created_at, updated_at
-  // })
+  return knex.schema.createTable("todos", (table) => {
+    table.increments("id"); // id
+    // Is this line needed to still create table column id?
+    //table.integer('id').notNullable();
+    table.string("title").notNullable();
+    table.string("description");
+    table.boolean("done").notNullable();
+    table.foreign("user_id").references("id").inTable("users");
+  });
 }
 
+// drop todos table
 export function down(knex) {
-  return knex.schema
-  // .dropTable('todos')
+  return knex.schema.dropTable("todos");
+}
+
+// users table
+
+export function up(knex) {
+  return knex.schema.createTable("users", (table) => {
+    table.increments("id"); // id
+    // Is this line needed to still create table column id?
+    //table.integer('id').notNullable();
+    table.string("email").notNullable();
+    table.string("user_name").notNullable();
+    table.string("first_name").notNullable();
+    table.string("last_name").notNullable();
+  });
+}
+
+// drop users table
+export function down(knex) {
+  return knex.schema.dropTable("users");
 }
