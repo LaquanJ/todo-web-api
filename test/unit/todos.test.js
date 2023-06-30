@@ -1,12 +1,12 @@
-"use strict";
+'use strict';
 
 // common modules
-import jwt from "jsonwebtoken";
-import { jest } from "@jest/globals";
+import jwt from 'jsonwebtoken';
+import { jest } from '@jest/globals';
 
 // custom modules
-import app from "#src/app.js";
-import db from "#database/index.js";
+import app from '#src/app.js';
+import db from '#database/index.js';
 
 // =============================================================================
 // General Setup & Teardown
@@ -14,82 +14,84 @@ import db from "#database/index.js";
 const testData = {
   todos: [
     {
-      id: 1,
-      title: "House Chores",
-      description: "Wash Dishes",
-      done: false,
-      user_id: 2,
-    },
-    {
-      id: 2,
-      title: "House Chores",
-      description: "Clean Room",
-      done: false,
-      user_id: 2,
-    },
-    {
-      id: 3,
-      title: "School Work",
-      description: "Finish Homework in English",
-      done: false,
-      user_id: 3,
-    },
-    {
-      id: 4,
-      title: "School Work",
-      description: "Finish homework in History",
-      done: true,
-      user_id: 3,
-    },
-    {
-      id: 5,
-      title: "House Chores",
-      description: "Pull Weeds around house",
+      title: 'House Chores',
+      description: 'Wash Dishes',
       done: false,
       user_id: 1,
     },
     {
-      id: 6,
-      title: "House Chores",
-      description: "Water garden",
+      title: 'House Chores',
+      description: 'Clean Room',
+      done: false,
+      user_id: 2,
+    },
+    {
+      title: 'School Work',
+      description: 'Finish Homework in English',
+      done: false,
+      user_id: 3,
+    },
+    {
+      title: 'School Work',
+      description: 'Finish homework in History',
+      done: true,
+      user_id: 3,
+    },
+    {
+      title: 'House Chores',
+      description: 'Pull Weeds around house',
+      done: false,
+      user_id: 1,
+    },
+    {
+      title: 'House Chores',
+      description: 'Water garden',
       done: true,
       user_id: 1,
     },
   ],
+  users: [
+    {
+      email: 'laquan@yahoo.com',
+      user_name: 'quan123',
+      first_name: 'Quan',
+      last_name: 'New'
+    },
+  ]
 };
 
 beforeEach(async () => {
   // clear todos
-  await db("todos").truncate();
+  await db('todos').truncate();
 });
 
 afterEach(async () => {
   // clear todos
-  await db("todos").truncate();
+  await db('todos').truncate();
 });
 
 // =============================================================================
 // Endpoint: /todos
 // =============================================================================
-describe("Endpoint: /todos", () => {
-  describe("GET", () => {
-    it("returns 200", async () => {
+describe('Endpoint: /todos', () => {
+  describe('GET', () => {
+    it('returns 200', async () => {
       expect.assertions(2);
 
       // setup
-      await db("todos").insert(testData.todos);
+      await db('todos').insert(testData.todos);
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
           {
-            oid: "00000000-0000-0000-0000-000000000000",
-            scp: "Todos.Read",
-            roles: ["Administrator"],
-            preferred_username: "administrator@claconnect.com",
-            name: "CLA Administrator",
-            azp: "11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d",
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
-          "00000000-0000-0000-0000-000000000000"
+          '00000000-0000-0000-0000-000000000000'
         )}`,
       };
 
@@ -146,8 +148,8 @@ describe("Endpoint: /todos", () => {
 
       // trigger
       const response = await app.inject({
-        method: "GET",
-        url: "/todos",
+        method: 'GET',
+        url: '/todos',
         headers: { Authorization: inputs.authorization },
       });
 
@@ -157,51 +159,66 @@ describe("Endpoint: /todos", () => {
     });
   });
 
-  describe("POST", () => {
-    it("creates a new todo", async () => {
+  describe('POST', () => {
+    it('returns 201', async () => {
       expect.assertions(2);
 
       // setup
-      await db("todos").insert(testData.todos);
+      await db('users').insert(testData.users);
+      await db('todos').insert(testData.todos);
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
           {
-            oid: "00000000-0000-0000-0000-000000000000",
-            scp: "Todos.Read",
-            roles: ["Administrator"],
-            preferred_username: "administrator@claconnect.com",
-            name: "CLA Administrator",
-            azp: "11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d",
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
-          "00000000-0000-0000-0000-000000000000"
+          '00000000-0000-0000-0000-000000000000'
         )}`,
+        body: {
+          prop1: 1,
+          prop2: 2
+        }
       };
 
       const outputs = {
         status: 201,
+        body: {
+          id: 1
+        }
       };
 
       // trigger
       const response = await app.inject({
-        method: "POST",
-        url: "/todos",
+        method: 'POST',
+        url: '/todos',
         headers: { Authorization: inputs.authorization },
       });
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
+      expect(response.json()).toStrictEqual(outputs.body);
     });
+
+    // TODO: returns 400, no body
+
+    // TODO: returns 400, empty body
+
+    // TODO: returns 400, no title
   });
 });
 
 // =============================================================================
 // Endpoint: /todos/:id:
 // =============================================================================
-describe("Endpoint: /todos/:id:", () => {
-  describe("GET", () => {});
+describe('Endpoint: /todos/:id:', () => {
+  describe('GET', () => { });
 
-  describe("PUT", () => {});
+  describe('PUT', () => { });
 
-  describe("DELETE", () => {});
+  describe('DELETE', () => { });
 });
