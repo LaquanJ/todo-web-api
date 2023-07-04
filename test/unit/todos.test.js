@@ -55,9 +55,9 @@ const testData = {
       email: 'laquan@yahoo.com',
       user_name: 'quan123',
       first_name: 'Quan',
-      last_name: 'New'
+      last_name: 'New',
     },
-  ]
+  ],
 };
 
 beforeEach(async () => {
@@ -179,10 +179,11 @@ describe('Endpoint: /todos', () => {
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
-        body: {
+        pbody: {
           prop1: 1,
           prop2: 2
         }
+        },
       };
 
       const outputs = {
@@ -205,20 +206,122 @@ describe('Endpoint: /todos', () => {
     });
 
     // TODO: returns 400, no body
+    it('returns 400, if no body', async () => {
+      expect.assertions(1);
 
+      // setup
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+       body: {
+          prop1: 1,
+          prop2: 2
+        }
+      };
+
+      const outputs = {
+        status: 400,
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'POST',
+        url: '/todos',
+        headers: { Authorization: inputs.authorization },
+      });
+
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+    });
     // TODO: returns 400, empty body
+    it('returns 400, empty body', async () => {
+      expect.assertions(1);
 
+      // setup
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+      };
+
+      const outputs = {
+        status: 400,
+        body: {},
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'POST',
+        url: '/todos',
+        headers: { Authorization: inputs.authorization },
+      });
+
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+    });
     // TODO: returns 400, no title
+    it('returns 400, if no title', async () => {
+      expect.assertions(1);
+
+      // setup
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+      };
+
+      const outputs = {
+        status: 400,
+        body: {
+          title: ""
+        }
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'POST',
+        url: '/todos',
+        headers: { Authorization: inputs.authorization },
+      });
+
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+    });
   });
-});
+
 
 // =============================================================================
 // Endpoint: /todos/:id:
 // =============================================================================
 describe('Endpoint: /todos/:id:', () => {
-  describe('GET', () => { });
+  describe('GET', () => {});
 
-  describe('PUT', () => { });
+  describe('PUT', () => {});
 
-  describe('DELETE', () => { });
+  describe('DELETE', () => {});
 });
