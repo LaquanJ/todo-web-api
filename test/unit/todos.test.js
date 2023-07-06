@@ -74,13 +74,12 @@ const testData = {
 
 beforeEach(async () => {
   // clear todos
-  await db('users').truncate();
   await db('todos').truncate();
 });
 
 afterEach(async () => {
   // clear todos
-  await db('users').truncate();
+
   await db('todos').truncate();
 });
 
