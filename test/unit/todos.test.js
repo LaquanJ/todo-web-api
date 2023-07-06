@@ -12,6 +12,26 @@ import db from '#database/index.js';
 // General Setup & Teardown
 // =============================================================================
 const testData = {
+  users: [
+    {
+      email: 'laquan@yahoo.com',
+      user_name: 'quan1',
+      first_name: 'Quan',
+      last_name: 'New',
+    },
+    {
+      email: 'laquan@gmail.com',
+      user_name: 'quan2',
+      first_name: 'Quan',
+      last_name: 'Newe',
+    },
+    {
+      email: 'laquan@aol.com',
+      user_name: 'quan3',
+      first_name: 'Quan',
+      last_name: 'Newel',
+    },
+  ],
   todos: [
     {
       title: 'House Chores',
@@ -50,23 +70,17 @@ const testData = {
       user_id: 1,
     },
   ],
-  users: [
-    {
-      email: 'laquan@yahoo.com',
-      user_name: 'quan123',
-      first_name: 'Quan',
-      last_name: 'New',
-    },
-  ],
 };
 
 beforeEach(async () => {
   // clear todos
+  await db('users').truncate();
   await db('todos').truncate();
 });
 
 afterEach(async () => {
   // clear todos
+  await db('users').truncate();
   await db('todos').truncate();
 });
 
@@ -79,6 +93,7 @@ describe('Endpoint: /todos', () => {
       expect.assertions(2);
 
       // setup
+      await db('users').insert(testData.users);
       await db('todos').insert(testData.todos);
 
       const inputs = {
@@ -159,6 +174,8 @@ describe('Endpoint: /todos', () => {
     });
   });
 
+  // POST ROUTES
+
   describe('POST', () => {
     it('returns 201', async () => {
       expect.assertions(2);
@@ -179,18 +196,17 @@ describe('Endpoint: /todos', () => {
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
-        pbody: {
+        body: {
           prop1: 1,
-          prop2: 2
-        }
+          prop2: 2,
         },
       };
 
       const outputs = {
-        status: 201,
+        status: 200,
         body: {
-          id: 1
-        }
+          id: 1,
+        },
       };
 
       // trigger
@@ -204,7 +220,6 @@ describe('Endpoint: /todos', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
       expect(response.json()).toStrictEqual(outputs.body);
     });
-
     // TODO: returns 400, no body
     it('returns 400, if no body', async () => {
       expect.assertions(1);
@@ -222,10 +237,10 @@ describe('Endpoint: /todos', () => {
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
-       body: {
+        body: {
           prop1: 1,
-          prop2: 2
-        }
+          prop2: 2,
+        },
       };
 
       const outputs = {
@@ -242,8 +257,8 @@ describe('Endpoint: /todos', () => {
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
-    // TODO: returns 400, empty body
-    it('returns 400, empty body', async () => {
+    //TODO: returns 400, empty body
+    it('returns 400, if empty body', async () => {
       expect.assertions(1);
 
       // setup
@@ -276,6 +291,7 @@ describe('Endpoint: /todos', () => {
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
+
     // TODO: returns 400, no title
     it('returns 400, if no title', async () => {
       expect.assertions(1);
@@ -298,8 +314,8 @@ describe('Endpoint: /todos', () => {
       const outputs = {
         status: 400,
         body: {
-          title: ""
-        }
+          title: '',
+        },
       };
 
       // trigger
@@ -313,13 +329,101 @@ describe('Endpoint: /todos', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
   });
-
+});
 
 // =============================================================================
 // Endpoint: /todos/:id:
 // =============================================================================
 describe('Endpoint: /todos/:id:', () => {
-  describe('GET', () => {});
+  describe('GET', () => {
+    it('returns 200', async () => {
+      expect.assertions(2);
+
+      // setup
+      await db('users').insert(testData.users);
+      await db('todos').insert(testData.todos);
+
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+        param: {
+          id: 1,
+        },
+      };
+
+      const outputs = {
+        status: 200,
+        body: {
+          result: [
+            {
+              id: testData.todos[0].id,
+              title: testData.todos[0].title,
+              description: testData.todos[0].description,
+              done: testData.todos[0].done,
+              userId: testData.todos[0].user_id,
+            },
+          ],
+        },
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'GET',
+        url: '/todos',
+        headers: { Authorization: inputs.authorization },
+      });
+
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+      expect(response.json()).toStrictEqual(outputs.body);
+    });
+
+    it('returns 404, if no todo matching id', async () => {
+      expect.assertions(1);
+
+      // setup
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+        param: {
+          id: 1,
+        },
+      };
+
+      const outputs = {
+        status: 404,
+        id: 1,
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'POST',
+        url: '/todos',
+        headers: { Authorization: inputs.authorization },
+      });
+
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+    });
+  });
 
   describe('PUT', () => {});
 
