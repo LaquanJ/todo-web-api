@@ -4,7 +4,7 @@
 import fs from 'fs';
 
 // custom modules
-// import todos from '#routes/todos.js'; // TODO: Uncomment when todos routes built
+import todos from '#routes/todos.js'; // TODO: Uncomment when todos routes built
 
 // =============================================================================
 // endpoints
@@ -14,17 +14,17 @@ export default async function routes(fastify, options) {
   fastify.route({
     method: 'GET',
     url: '/',
-    handler: getIndex
+    handler: getIndex,
   });
 
   fastify.route({
     method: 'GET',
     url: '/openapi.yaml',
-    handler: getSpecification
+    handler: getSpecification,
   });
 
   // setup other routes
-  // await fastify.register(todos); // TODO: Uncomment when todos routes built
+  await fastify.register(todos); // TODO: Uncomment when todos routes built
 }
 
 // =============================================================================
@@ -35,7 +35,6 @@ async function getIndex(request, reply) {
   // send response
   return reply.code(200).send({ version: process.env.npm_package_version });
 }
-
 
 // return specification
 async function getSpecification(request, reply) {

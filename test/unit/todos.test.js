@@ -55,19 +55,19 @@ const testData = {
       title: 'School Work',
       description: 'Finish homework in History',
       done: true,
-      user_id: 3,
+      user_id: 1,
     },
     {
       title: 'House Chores',
       description: 'Pull Weeds around house',
       done: false,
-      user_id: 1,
+      user_id: 2,
     },
     {
       title: 'House Chores',
       description: 'Water garden',
       done: true,
-      user_id: 1,
+      user_id: 3,
     },
   ],
 };
@@ -139,21 +139,21 @@ describe('Endpoint: /todos', () => {
               title: testData.todos[3].title,
               description: testData.todos[3].description,
               done: testData.todos[3].done,
-              userId: testData.todos[3].user_id,
+              userId: testData.todos[0].user_id,
             },
             {
               id: 5,
               title: testData.todos[4].title,
               description: testData.todos[4].description,
               done: testData.todos[4].done,
-              userId: testData.todos[4].user_id,
+              userId: testData.todos[1].user_id,
             },
             {
               id: 6,
               title: testData.todos[5].title,
               description: testData.todos[5].description,
               done: testData.todos[5].done,
-              userId: testData.todos[5].user_id,
+              userId: testData.todos[2].user_id,
             },
           ],
           total: 6,
@@ -196,13 +196,14 @@ describe('Endpoint: /todos', () => {
           '00000000-0000-0000-0000-000000000000'
         )}`,
         body: {
-          prop1: 1,
-          prop2: 2,
+          title: 'Clean House',
+          description: 'Wash dishes',
+          user_id: 1,
         },
       };
 
       const outputs = {
-        status: 200,
+        status: 201,
         body: {
           id: 1,
         },
@@ -213,7 +214,9 @@ describe('Endpoint: /todos', () => {
         method: 'POST',
         url: '/todos',
         headers: { Authorization: inputs.authorization },
+        payload: inputs.body,
       });
+      console.log(response.json());
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
@@ -409,7 +412,6 @@ describe('Endpoint: /todos/:id:', () => {
 
       const outputs = {
         status: 404,
-        id: 1,
       };
 
       // trigger
