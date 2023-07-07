@@ -41,6 +41,17 @@ export default async function routes(fastify, options) {
     },
     handler: createTodos,
   });
+
+  fastify.route({
+    method: 'GET',
+    url: '/todos/{id}',
+    // preValidation: [fastify.authenticate, fastify.authorize],
+    // config: {
+    //   validScopes: ['Todos.Read', 'Todos.Manage'],
+    //   validRoles: ['Administrator', 'Client']
+    // },
+    handler: getTodo,
+  });
 }
 
 // =============================================================================
@@ -136,4 +147,36 @@ async function createTodos(request, reply) {
     console.error(error);
     reply.code(500).send('Internal Server Error');
   }
+}
+
+// retrieves all todos
+async function getTodo(request, reply) {
+  // attempt to lookup todo
+  const { id } = request.body;
+  let todo;
+  let total;
+  try {
+    todo = await db('todos')
+      .select({
+        id: 'id',
+        title: 'title',
+        description: 'description',
+        done: 'done',
+        userId: 'user_id',
+      })
+      .where({ id: id });
+
+    console.log('***test ');
+  } catch (error) {
+    /* istanbul ignore next */
+    return reply.code(500).send({ message: error.message });
+  }
+
+  // build response
+  const response = {
+    results: todo,
+  };
+
+  // send response
+  return reply.code(200).send(response);
 }

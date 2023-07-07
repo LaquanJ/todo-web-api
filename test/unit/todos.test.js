@@ -380,7 +380,7 @@ describe('Endpoint: /todos/:id:', () => {
       // trigger
       const response = await app.inject({
         method: 'GET',
-        url: '/todos',
+        url: '/todos/{id}',
         headers: { Authorization: inputs.authorization },
       });
 
