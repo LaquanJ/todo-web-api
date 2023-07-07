@@ -44,7 +44,7 @@ export default async function routes(fastify, options) {
 
   fastify.route({
     method: 'GET',
-    url: '/todos/{id}',
+    url: '/todos/:id',
     // preValidation: [fastify.authenticate, fastify.authorize],
     // config: {
     //   validScopes: ['Todos.Read', 'Todos.Manage'],
@@ -99,62 +99,37 @@ async function getTodos(request, reply) {
 }
 
 async function createTodos(request, reply) {
-  console.log(request.body);
+  // attempt to create todo
+  let result;
   try {
-    const { title, description, user_id } = request.body;
-
-    // Check if the required properties are present in the request body
-    if (!request.body) {
-      reply.code(400).send('Missing required properties');
-      return;
-    }
-
-    // Check if the required properties are present in the request body
-    if (request.body === null) {
-      reply.code(400).send('Missing required properties');
-      return;
-    }
-
-    // Check if the required properties are present in the request body
-    if (!title) {
-      reply.code(400).send('Missing required properties');
-      return;
-    }
+    const { title, description, userId } = request.body;
 
     // Check if the specified user exists
-    const user = await db('users').where({ id: user_id }).first();
+    const user = await db('users').where({ id: userId }).first();
     if (!user) {
-      reply.code(404).send('User not found');
-      return;
+      return reply.code(400).send('User not found');
     }
 
     // Insert the new todo into the database
-    const [id] = await db('todos').insert({
+    result = await db('todos').insert({
       title,
       description,
       done: false,
-      user_id: user_id,
-    });
-
-    const response = {
-      // How do I get it to return the id of the number created?
-      id: 1,
-    };
-
-    // Return the newly created todo ID in the response
-    reply.code(201).send(response);
+      user_id: userId,
+    }, 'id');
   } catch (error) {
     console.error(error);
-    reply.code(500).send('Internal Server Error');
+    return reply.code(500).send('Internal Server Error');
   }
+
+  // send response
+  return reply.code(201).send({ id: result[0].id });
 }
 
 // retrieves all todos
 async function getTodo(request, reply) {
   // attempt to lookup todo
-  const { id } = request.body;
   let todo;
-  let total;
   try {
     todo = await db('todos')
       .select({
@@ -164,19 +139,15 @@ async function getTodo(request, reply) {
         done: 'done',
         userId: 'user_id',
       })
-      .where({ id: id });
-
-    console.log('***test ');
+      .where({ id: request.params.id })
+      .first();
   } catch (error) {
     /* istanbul ignore next */
     return reply.code(500).send({ message: error.message });
   }
 
-  // build response
-  const response = {
-    results: todo,
-  };
+  // TODO: check todo was found
 
   // send response
-  return reply.code(200).send(response);
+  return reply.code(200).send(todo);
 }

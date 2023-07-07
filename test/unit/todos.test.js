@@ -79,7 +79,6 @@ beforeEach(async () => {
 
 afterEach(async () => {
   // clear todos
-
   await db('todos').truncate();
 });
 
@@ -174,14 +173,12 @@ describe('Endpoint: /todos', () => {
   });
 
   // POST ROUTES
-
   describe('POST', () => {
     it('returns 201', async () => {
       expect.assertions(2);
 
       // setup
       await db('users').insert(testData.users);
-      await db('todos').insert(testData.todos);
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -198,7 +195,7 @@ describe('Endpoint: /todos', () => {
         body: {
           title: 'Clean House',
           description: 'Wash dishes',
-          user_id: 1,
+          userId: 1,
         },
       };
 
@@ -216,13 +213,12 @@ describe('Endpoint: /todos', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
-      console.log(response.json());
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
       expect(response.json()).toStrictEqual(outputs.body);
     });
-    // TODO: returns 400, no body
+
     it('returns 400, if no body', async () => {
       expect.assertions(1);
 
@@ -239,10 +235,6 @@ describe('Endpoint: /todos', () => {
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
-        body: {
-          prop1: 1,
-          prop2: 2,
-        },
       };
 
       const outputs = {
@@ -254,12 +246,13 @@ describe('Endpoint: /todos', () => {
         method: 'POST',
         url: '/todos',
         headers: { Authorization: inputs.authorization },
+        payload: inputs.body,
       });
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
-    //TODO: returns 400, empty body
+
     it('returns 400, if empty body', async () => {
       expect.assertions(1);
 
@@ -276,11 +269,11 @@ describe('Endpoint: /todos', () => {
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
+        body: {}
       };
 
       const outputs = {
         status: 400,
-        body: {},
       };
 
       // trigger
@@ -288,14 +281,14 @@ describe('Endpoint: /todos', () => {
         method: 'POST',
         url: '/todos',
         headers: { Authorization: inputs.authorization },
+        payload: inputs.body,
       });
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
-    // TODO: returns 400, no title
-    it('returns 400, if no title', async () => {
+    it('returns 400, no valid properties', async () => {
       expect.assertions(1);
 
       // setup
@@ -311,13 +304,14 @@ describe('Endpoint: /todos', () => {
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
+        body: {
+          prop1: '1',
+          prop2: '2',
+        }
       };
 
       const outputs = {
         status: 400,
-        body: {
-          title: '',
-        },
       };
 
       // trigger
@@ -325,25 +319,18 @@ describe('Endpoint: /todos', () => {
         method: 'POST',
         url: '/todos',
         headers: { Authorization: inputs.authorization },
+        payload: inputs.body,
       });
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
-  });
-});
 
-// =============================================================================
-// Endpoint: /todos/:id:
-// =============================================================================
-describe('Endpoint: /todos/:id:', () => {
-  describe('GET', () => {
-    it('returns 200', async () => {
-      expect.assertions(2);
+    it('returns 400, if no title', async () => {
+      expect.assertions(1);
 
       // setup
       await db('users').insert(testData.users);
-      await db('todos').insert(testData.todos);
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -357,7 +344,58 @@ describe('Endpoint: /todos/:id:', () => {
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
-        param: {
+        body: {
+          // title: 'Clean House',
+          description: 'Wash dishes',
+          userId: 1,
+        },
+      };
+
+      const outputs = {
+        status: 400,
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'POST',
+        url: '/todos',
+        headers: { Authorization: inputs.authorization },
+        payload: inputs.body,
+      });
+
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+    });
+
+    // TODO: returns 400, invalid userId
+  });
+});
+
+// =============================================================================
+// Endpoint: /todos/:id:
+// =============================================================================
+describe('Endpoint: /todos/:id:', () => {
+  describe('GET', () => {
+    it('returns 200', async () => {
+      expect.assertions(2);
+
+      // setup
+      await db('users').insert(testData.users[0]);
+      await db('todos').insert(testData.todos[0]);
+
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+        params: {
           id: 1,
         },
       };
@@ -365,22 +403,18 @@ describe('Endpoint: /todos/:id:', () => {
       const outputs = {
         status: 200,
         body: {
-          result: [
-            {
-              id: testData.todos[0].id,
-              title: testData.todos[0].title,
-              description: testData.todos[0].description,
-              done: testData.todos[0].done,
-              userId: testData.todos[0].user_id,
-            },
-          ],
+          id: 1,
+          title: testData.todos[0].title,
+          description: testData.todos[0].description,
+          done: testData.todos[0].done,
+          userId: testData.todos[0].user_id,
         },
       };
 
       // trigger
       const response = await app.inject({
         method: 'GET',
-        url: '/todos/{id}',
+        url: `/todos/${inputs.params.id}`,
         headers: { Authorization: inputs.authorization },
       });
 
@@ -405,7 +439,7 @@ describe('Endpoint: /todos/:id:', () => {
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
-        param: {
+        params: {
           id: 1,
         },
       };
@@ -416,8 +450,8 @@ describe('Endpoint: /todos/:id:', () => {
 
       // trigger
       const response = await app.inject({
-        method: 'POST',
-        url: '/todos',
+        method: 'GET',
+        url: `/todos/${inputs.params.id}`,
         headers: { Authorization: inputs.authorization },
       });
 
@@ -426,7 +460,7 @@ describe('Endpoint: /todos/:id:', () => {
     });
   });
 
-  describe('PUT', () => {});
+  describe('PUT', () => { });
 
-  describe('DELETE', () => {});
+  describe('DELETE', () => { });
 });
