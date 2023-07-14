@@ -269,7 +269,7 @@ describe('Endpoint: /todos', () => {
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
-        body: {}
+        body: {},
       };
 
       const outputs = {
@@ -307,7 +307,7 @@ describe('Endpoint: /todos', () => {
         body: {
           prop1: '1',
           prop2: '2',
-        }
+        },
       };
 
       const outputs = {
@@ -368,6 +368,7 @@ describe('Endpoint: /todos', () => {
     });
 
     // TODO: returns 400, invalid userId
+    it('returns 400, if userId is invalid', async () => {});
   });
 });
 
@@ -417,7 +418,6 @@ describe('Endpoint: /todos/:id:', () => {
         url: `/todos/${inputs.params.id}`,
         headers: { Authorization: inputs.authorization },
       });
-
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
       expect(response.json()).toStrictEqual(outputs.body);
@@ -454,13 +454,152 @@ describe('Endpoint: /todos/:id:', () => {
         url: `/todos/${inputs.params.id}`,
         headers: { Authorization: inputs.authorization },
       });
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+    });
+  });
+
+  describe('PUT', () => {
+    it('returns 201', async () => {
+      expect.assertions(2);
+
+      // setup
+      await db('users').insert(testData.users);
+      await db('todos').insert(testData.todos);
+
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+        body: {
+          title: 'House Chores',
+          description: 'Wash Dishes',
+          done: false,
+          userId: 1,
+        },
+        params: {
+          id: 1,
+        },
+      };
+
+      const outputs = {
+        status: 201,
+        body: {
+          id: 1,
+          title: testData.todos[1].title,
+          description: testData.todos[0].description,
+          done: testData.todos[0].done,
+          userId: testData.todos[0].user_id,
+        },
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'PUT',
+        url: `/todos/${inputs.params.id}`,
+        headers: { Authorization: inputs.authorization },
+        payload: inputs.body,
+      });
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+      expect(response.json()).toStrictEqual(outputs.body);
+    });
+
+    it('returns 404, if no todo matching id', async () => {
+      expect.assertions(1);
+      await db('users').insert(testData.users);
+      await db('todos').insert(testData.todos);
+      // setup
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+        params: {
+          id: 0,
+        },
+        body: {
+          title: 'House Chores',
+          description: 'Wash Dishes',
+          done: false,
+          userId: 1,
+        },
+      };
+
+      const outputs = {
+        status: 404,
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'PUT',
+        url: `/todos/${inputs.params.id}`,
+        headers: { Authorization: inputs.authorization },
+        payload: inputs.body,
+      });
+
+      console.log(response.json());
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
   });
 
-  describe('PUT', () => { });
+  describe('DELETE', () => {
+    it('returns 204', async () => {
+      expect.assertions(1);
 
-  describe('DELETE', () => { });
+      // setup
+      await db('users').insert(testData.users);
+      await db('todos').insert(testData.todos);
+
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+        params: {
+          id: 1,
+        },
+      };
+
+      const outputs = {
+        status: 204,
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'DELETE',
+        url: `/todos/${inputs.params.id}`,
+        headers: { Authorization: inputs.authorization },
+        payload: inputs.body,
+      });
+
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+      //expect(response.json()).toStrictEqual(outputs.body);
+    });
+  });
 });

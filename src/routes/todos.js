@@ -52,6 +52,28 @@ export default async function routes(fastify, options) {
     // },
     handler: getTodo,
   });
+
+  fastify.route({
+    method: 'PUT',
+    url: '/todos/:id',
+    // preValidation: [fastify.authenticate, fastify.authorize],
+    // config: {
+    //   validScopes: ['Todos.Read', 'Todos.Manage'],
+    //   validRoles: ['Administrator', 'Client']
+    // },
+    schema: {
+      body: {
+        type: 'object',
+        properties: {
+          title: { type: 'string' },
+          description: { type: 'string' },
+          done: { type: 'boolean' },
+          userId: { type: 'integer' },
+        },
+      },
+    },
+    handler: updateTodo,
+  });
 }
 
 // =============================================================================
@@ -111,22 +133,25 @@ async function createTodos(request, reply) {
     }
 
     // Insert the new todo into the database
-    result = await db('todos').insert({
-      title,
-      description,
-      done: false,
-      user_id: userId,
-    }, 'id');
+    result = await db('todos').insert(
+      {
+        title,
+        description,
+        done: false,
+        user_id: userId,
+      },
+      'id'
+    );
   } catch (error) {
     console.error(error);
-    return reply.code(500).send('Internal Server Error');
+    return reply.code(500).send({ message: error.message });
   }
 
   // send response
   return reply.code(201).send({ id: result[0].id });
 }
 
-// retrieves all todos
+// retrieves todo
 async function getTodo(request, reply) {
   // attempt to lookup todo
   let todo;
@@ -147,7 +172,45 @@ async function getTodo(request, reply) {
   }
 
   // TODO: check todo was found
+  if (!todo) {
+    return reply.code(404).send('Todo not found');
+  }
 
   // send response
   return reply.code(200).send(todo);
+}
+
+async function updateTodo(request, reply) {
+  const todoId = request.params.id;
+
+  const existingTodo = await db('todos').where('id', todoId).first();
+
+  if (!existingTodo) {
+    return reply.code(404).send('Todo not found');
+  }
+  // attempt to lookup todo
+  const { title, description, done } = request.body;
+  let todo;
+  try {
+    await db('todos')
+      .where({ id: request.params.id })
+      .update({ title: title, description: description, done: done });
+
+    todo = await db('todos')
+      .where({ id: request.params.id })
+      .select({
+        id: 'id',
+        title: 'title',
+        description: 'description',
+        done: 'done',
+        userId: 'user_id',
+      })
+      .first();
+  } catch (error) {
+    /* istanbul ignore next */
+    return reply.code(500).send({ message: error.message });
+  }
+
+  // send response
+  return reply.code(201).send(todo);
 }
