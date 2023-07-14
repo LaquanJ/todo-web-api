@@ -368,7 +368,7 @@ describe('Endpoint: /todos', () => {
     });
 
     // TODO: returns 400, invalid userId
-    it('returns 400, if userId is invalid', async () => {});
+    it('returns 400, if userId is invalid', async () => { });
   });
 });
 
@@ -596,7 +596,6 @@ describe('Endpoint: /todos/:id:', () => {
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
-      //expect(response.json()).toStrictEqual(outputs.body);
     });
 
     it('returns 404, if no todo exists', async () => {
@@ -631,7 +630,6 @@ describe('Endpoint: /todos/:id:', () => {
         headers: { Authorization: inputs.authorization },
       });
 
-      console.log(response.json());
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });

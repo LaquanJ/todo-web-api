@@ -114,7 +114,6 @@ async function getTodos(request, reply) {
       .offset(request.query.offset ? request.query.offset : 0)
       .limit(limit);
 
-    console.log('***test ');
     total = await db('todos').count('id', { as: 'count' });
   } catch (error) {
     /* istanbul ignore next */
@@ -227,20 +226,22 @@ async function updateTodo(request, reply) {
 }
 
 async function deleteTodo(request, reply) {
-  const todoId = request.params.id;
-
   // attempt to lookup todo
-
+  let result;
   try {
-    const deletedTodo = await db('todos').where('id', todoId).del();
-    if (deletedTodo === 0) {
-      return reply.code(404).send({ message: error.message });
-    }
+    result = await db('todos')
+      .del()
+      .where({ id: request.params.id });
   } catch (error) {
     /* istanbul ignore next */
     return reply.code(500).send({ message: error.message });
   }
 
+  // check delete succeeded
+  if (!result) {
+    return reply.code(404).send();
+  }
+
   // send response
-  return reply.code(204).send('Todo deleted.');
+  return reply.code(204).send();
 }

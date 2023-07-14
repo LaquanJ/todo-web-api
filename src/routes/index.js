@@ -4,7 +4,7 @@
 import fs from 'fs';
 
 // custom modules
-import todos from '#routes/todos.js'; // TODO: Uncomment when todos routes built
+import todos from '#routes/todos.js';
 
 // =============================================================================
 // endpoints
@@ -24,7 +24,7 @@ export default async function routes(fastify, options) {
   });
 
   // setup other routes
-  await fastify.register(todos); // TODO: Uncomment when todos routes built
+  await fastify.register(todos);
 }
 
 // =============================================================================
