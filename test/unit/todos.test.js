@@ -598,5 +598,42 @@ describe('Endpoint: /todos/:id:', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
       //expect(response.json()).toStrictEqual(outputs.body);
     });
+
+    it('returns 404, if no todo exists', async () => {
+      expect.assertions(1);
+
+      // setup
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+        params: {
+          id: 1,
+        },
+      };
+
+      const outputs = {
+        status: 404,
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'DELETE',
+        url: `/todos/${inputs.params.id}`,
+        headers: { Authorization: inputs.authorization },
+      });
+
+      console.log(response.json());
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+    });
   });
 });
