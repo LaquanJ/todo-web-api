@@ -74,6 +74,17 @@ export default async function routes(fastify, options) {
     },
     handler: updateTodo,
   });
+
+  fastify.route({
+    method: 'DELETE',
+    url: '/todos/:id',
+    // preValidation: [fastify.authenticate, fastify.authorize],
+    // config: {
+    //   validScopes: ['Todos.Read', 'Todos.Manage'],
+    //   validRoles: ['Administrator', 'Client']
+    // },
+    handler: deleteTodo,
+  });
 }
 
 // =============================================================================
@@ -181,6 +192,41 @@ async function getTodo(request, reply) {
 }
 
 async function updateTodo(request, reply) {
+  const todoId = request.params.id;
+
+  const existingTodo = await db('todos').where('id', todoId).first();
+
+  if (!existingTodo) {
+    return reply.code(404).send({ message: error.message });
+  }
+  // attempt to lookup todo
+  const { title, description, done } = request.body;
+  let todo;
+  try {
+    await db('todos')
+      .where({ id: request.params.id })
+      .update({ title: title, description: description, done: done });
+
+    todo = await db('todos')
+      .where({ id: request.params.id })
+      .select({
+        id: 'id',
+        title: 'title',
+        description: 'description',
+        done: 'done',
+        userId: 'user_id',
+      })
+      .first();
+  } catch (error) {
+    /* istanbul ignore next */
+    return reply.code(500).send({ message: error.message });
+  }
+
+  // send response
+  return reply.code(201).send(todo);
+}
+
+async function deleteTodo(request, reply) {
   const todoId = request.params.id;
 
   const existingTodo = await db('todos').where('id', todoId).first();
