@@ -186,7 +186,7 @@ async function updateTodo(request, reply) {
   const existingTodo = await db('todos').where('id', todoId).first();
 
   if (!existingTodo) {
-    return reply.code(404).send('Todo not found');
+    return reply.code(404).send({ message: error.message });
   }
   // attempt to lookup todo
   const { title, description, done } = request.body;

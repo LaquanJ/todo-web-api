@@ -516,7 +516,6 @@ describe('Endpoint: /todos/:id:', () => {
     it('returns 404, if no todo matching id', async () => {
       expect.assertions(1);
       await db('users').insert(testData.users);
-      await db('todos').insert(testData.todos);
       // setup
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -531,7 +530,7 @@ describe('Endpoint: /todos/:id:', () => {
           '00000000-0000-0000-0000-000000000000'
         )}`,
         params: {
-          id: 0,
+          id: 1,
         },
         body: {
           title: 'House Chores',
@@ -552,8 +551,6 @@ describe('Endpoint: /todos/:id:', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
-
-      console.log(response.json());
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
