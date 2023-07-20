@@ -75,24 +75,25 @@ const testData = {
 beforeEach(async () => {
   // clear todos
   await db('todos').truncate();
+  await db('users').truncate();
 });
 
 afterEach(async () => {
   // clear todos
   await db('todos').truncate();
+  await db('users').truncate();
 });
 
 // =============================================================================
 // Endpoint: /todos
 // =============================================================================
-describe('Endpoint: /todos', () => {
+describe('Endpoint: /users', () => {
   describe('GET', () => {
     it('returns 200', async () => {
       expect.assertions(2);
 
       // setup
       await db('users').insert(testData.users);
-      await db('todos').insert(testData.todos);
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -114,55 +115,34 @@ describe('Endpoint: /todos', () => {
           results: [
             {
               id: 1,
-              title: testData.todos[0].title,
-              description: testData.todos[0].description,
-              done: testData.todos[0].done,
-              userId: testData.todos[0].user_id,
+              email: testData.users[0].email,
+              user_name: testData.users[0].user_name,
+              first_name: testData.users[0].first_name,
+              last_name: testData.users[0].last_name,
             },
             {
               id: 2,
-              title: testData.todos[1].title,
-              description: testData.todos[1].description,
-              done: testData.todos[1].done,
-              userId: testData.todos[1].user_id,
+              email: testData.users[1].email,
+              user_name: testData.users[1].user_name,
+              first_name: testData.users[1].first_name,
+              last_name: testData.users[1].last_name,
             },
             {
               id: 3,
-              title: testData.todos[2].title,
-              description: testData.todos[2].description,
-              done: testData.todos[2].done,
-              userId: testData.todos[2].user_id,
-            },
-            {
-              id: 4,
-              title: testData.todos[3].title,
-              description: testData.todos[3].description,
-              done: testData.todos[3].done,
-              userId: testData.todos[0].user_id,
-            },
-            {
-              id: 5,
-              title: testData.todos[4].title,
-              description: testData.todos[4].description,
-              done: testData.todos[4].done,
-              userId: testData.todos[1].user_id,
-            },
-            {
-              id: 6,
-              title: testData.todos[5].title,
-              description: testData.todos[5].description,
-              done: testData.todos[5].done,
-              userId: testData.todos[2].user_id,
+              email: testData.users[2].email,
+              user_name: testData.users[2].user_name,
+              first_name: testData.users[2].first_name,
+              last_name: testData.users[2].last_name,
             },
           ],
-          total: 6,
+          total: 3,
         },
       };
 
       // trigger
       const response = await app.inject({
         method: 'GET',
-        url: '/todos',
+        url: '/users',
         headers: { Authorization: inputs.authorization },
       });
 

@@ -12,15 +12,15 @@ import db from '#database/index.js';
 export default async function routes(fastify, options) {
   fastify.route({
     method: 'GET',
-    url: '/todos',
+    url: '/users',
     // preValidation: [fastify.authenticate, fastify.authorize],
     // config: {
     //   validScopes: ['Todos.Read', 'Todos.Manage'],
     //   validRoles: ['Administrator', 'Client']
     // },
-    handler: getTodos,
+    handler: getUsers,
   });
-  fastify.route({
+  /* fastify.route({
     method: 'POST',
     url: '/todos',
     // preValidation: [fastify.authenticate, fastify.authorize],
@@ -84,14 +84,14 @@ export default async function routes(fastify, options) {
     //   validRoles: ['Administrator', 'Client']
     // },
     handler: deleteTodo,
-  });
+  }); */
 }
 
 // =============================================================================
 // business logic
 // =============================================================================
 // retrieves all todos
-async function getTodos(request, reply) {
+async function getUsers(request, reply) {
   // add upper bound for limit
   let limit = 50;
   if (request.query.limit) {
@@ -99,30 +99,30 @@ async function getTodos(request, reply) {
   }
 
   // attempt to lookup todos
-  let todos;
+  let users;
   let total;
   try {
-    todos = await db('todos')
+    users = await db('users')
       .select({
         id: 'id',
-        title: 'title',
-        description: 'description',
-        done: 'done',
-        userId: 'user_id',
+        email: 'email',
+        user_name: 'user_name',
+        first_name: 'first_name',
+        last_name: 'last_name',
       })
       .orderBy('id')
       .offset(request.query.offset ? request.query.offset : 0)
       .limit(limit);
 
-    total = await db('todos').count('id', { as: 'count' });
+    total = await db('users').count('id', { as: 'count' });
   } catch (error) {
-    /* istanbul ignore next */
+    // istanbul ignore next
     return reply.code(500).send({ message: error.message });
   }
 
   // build response
   const response = {
-    results: todos,
+    results: users,
     total: total[0].count,
   };
 
@@ -130,7 +130,7 @@ async function getTodos(request, reply) {
   return reply.code(200).send(response);
 }
 
-async function createTodos(request, reply) {
+/* async function createTodos(request, reply) {
   // attempt to create todo
   let result;
   try {
@@ -177,7 +177,7 @@ async function getTodo(request, reply) {
       .where({ id: request.params.id })
       .first();
   } catch (error) {
-    /* istanbul ignore next */
+    //istanbul ignore next 
     return reply.code(500).send({ message: error.message });
   }
 
@@ -217,7 +217,7 @@ async function updateTodo(request, reply) {
       })
       .first();
   } catch (error) {
-    /* istanbul ignore next */
+    //istanbul ignore next 
     return reply.code(500).send({ message: error.message });
   }
 
@@ -231,7 +231,7 @@ async function deleteTodo(request, reply) {
   try {
     result = await db('todos').del().where({ id: request.params.id });
   } catch (error) {
-    /* istanbul ignore next */
+    //istanbul ignore next
     return reply.code(500).send({ message: error.message });
   }
 
@@ -243,3 +243,4 @@ async function deleteTodo(request, reply) {
   // send response
   return reply.code(204).send();
 }
+  */

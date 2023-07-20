@@ -5,6 +5,7 @@ import fs from 'fs';
 
 // custom modules
 import todos from '#routes/todos.js';
+import users from '#routes/users.js';
 
 // =============================================================================
 // endpoints
@@ -25,6 +26,7 @@ export default async function routes(fastify, options) {
 
   // setup other routes
   await fastify.register(todos);
+  await fastify.register(users);
 }
 
 // =============================================================================
