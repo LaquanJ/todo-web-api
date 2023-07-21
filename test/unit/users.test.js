@@ -352,6 +352,10 @@ describe('Endpoint: /users', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
+    // TODO: returns 400, title is empty string
+
+    // TODO returns 400, title is string with whitespace
+
     // TODO: returns 400, invalid userId
     it('returns 400, if userId is invalid', async () => {
       expect.assertions(1);
