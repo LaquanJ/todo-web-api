@@ -34,7 +34,7 @@ export default async function routes(fastify, options) {
         properties: {
           title: { type: 'string' },
           description: { type: 'string' },
-          userId: { type: 'integer' },
+          userId: { type: 'integer' }, // TODO: userId should be required + unit test for when it isn't
         },
         required: ['title'],
       },

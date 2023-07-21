@@ -3,8 +3,21 @@ info:
   title: To Dos API
   version: 1.0.0
 servers:
-  - url: https://api.server.test/v1
+  - url: http://localhost:8080
+    description: Local
+  - url: TBD
+    description: Cloud DEV
+  - url: TBD
+    description: Cloud QA
+  - url: TBD
+    description: Cloud UAT
+  - url: TBD
+    description: Cloud PROD
+
 paths:
+  # ============================================================================
+  # todos
+  # ============================================================================
   /todos:
     get:
       tags: 
@@ -244,6 +257,9 @@ paths:
         default:
           $ref: "#/components/responses/UnexpectedError"
   
+  # ============================================================================
+  # users
+  # ============================================================================
   /users:
     get:
       tags: 

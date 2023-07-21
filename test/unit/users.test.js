@@ -2,7 +2,6 @@
 
 // common modules
 import jwt from 'jsonwebtoken';
-import { jest } from '@jest/globals';
 
 // custom modules
 import app from '#src/app.js';
@@ -75,17 +74,23 @@ const testData = {
 beforeEach(async () => {
   // clear todos
   await db('todos').truncate();
-  await db('users').truncate();
+
+  // clear users and reset auto increment
+  await db('users').del();
+  await db.raw(`DBCC CHECKIDENT ('users', RESEED, 0)`);
 });
 
 afterEach(async () => {
   // clear todos
   await db('todos').truncate();
-  await db('users').truncate();
+
+  // clear users and reset auto increment
+  await db('users').del();
+  await db.raw(`DBCC CHECKIDENT ('users', RESEED, 0)`);
 });
 
 // =============================================================================
-// Endpoint: /todos
+// Endpoint: /users
 // =============================================================================
 describe('Endpoint: /users', () => {
   describe('GET', () => {

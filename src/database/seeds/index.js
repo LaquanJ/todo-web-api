@@ -7,6 +7,7 @@
 import db from '#database/index.js';
 
 export async function seed() {
+  // TODO: create seeds
   // seed todos
   // await db('todos')
   //   .insert({
