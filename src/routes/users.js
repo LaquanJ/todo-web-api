@@ -20,9 +20,9 @@ export default async function routes(fastify, options) {
     // },
     handler: getUsers,
   });
-  /* fastify.route({
+  fastify.route({
     method: 'POST',
-    url: '/todos',
+    url: '/users',
     // preValidation: [fastify.authenticate, fastify.authorize],
     // config: {
     //   validScopes: ['Todos.Read', 'Todos.Manage'],
@@ -32,30 +32,31 @@ export default async function routes(fastify, options) {
       body: {
         type: 'object',
         properties: {
-          title: { type: 'string' },
-          description: { type: 'string' },
-          userId: { type: 'integer' },
+          email: { type: 'string' },
+          userName: { type: 'string' },
+          firstName: { type: 'string' },
+          lastName: { type: 'string' },
         },
-        required: ['title'],
+        required: ['email', 'userName', 'firstName', 'lastName'],
       },
     },
-    handler: createTodos,
+    handler: createUser,
   });
 
   fastify.route({
     method: 'GET',
-    url: '/todos/:id',
+    url: '/users/:id',
     // preValidation: [fastify.authenticate, fastify.authorize],
     // config: {
     //   validScopes: ['Todos.Read', 'Todos.Manage'],
     //   validRoles: ['Administrator', 'Client']
     // },
-    handler: getTodo,
+    handler: getUser,
   });
 
   fastify.route({
     method: 'PUT',
-    url: '/todos/:id',
+    url: '/users/:id',
     // preValidation: [fastify.authenticate, fastify.authorize],
     // config: {
     //   validScopes: ['Todos.Read', 'Todos.Manage'],
@@ -65,32 +66,32 @@ export default async function routes(fastify, options) {
       body: {
         type: 'object',
         properties: {
-          title: { type: 'string' },
-          description: { type: 'string' },
-          done: { type: 'boolean' },
-          userId: { type: 'integer' },
+          email: { type: 'string' },
+          userName: { type: 'string' },
+          firstName: { type: 'string' },
+          lastName: { type: 'string' },
         },
       },
     },
-    handler: updateTodo,
+    handler: updateUser,
   });
 
   fastify.route({
     method: 'DELETE',
-    url: '/todos/:id',
+    url: '/users/:id',
     // preValidation: [fastify.authenticate, fastify.authorize],
     // config: {
     //   validScopes: ['Todos.Read', 'Todos.Manage'],
     //   validRoles: ['Administrator', 'Client']
     // },
-    handler: deleteTodo,
-  }); */
+    handler: deleteUser,
+  });
 }
 
 // =============================================================================
 // business logic
 // =============================================================================
-// retrieves all todos
+// retrieves all users
 async function getUsers(request, reply) {
   // add upper bound for limit
   let limit = 50;
@@ -98,7 +99,7 @@ async function getUsers(request, reply) {
     limit = Math.min(Math.round(request.query.limit), 250);
   }
 
-  // attempt to lookup todos
+  // attempt to lookup users
   let users;
   let total;
   try {
@@ -130,25 +131,19 @@ async function getUsers(request, reply) {
   return reply.code(200).send(response);
 }
 
-/* async function createTodos(request, reply) {
-  // attempt to create todo
+async function createUser(request, reply) {
+  // attempt to create user
   let result;
   try {
-    const { title, description, userId } = request.body;
+    const { email, userName, firstName, lastName } = request.body;
 
-    // Check if the specified user exists
-    const user = await db('users').where({ id: userId }).first();
-    if (!user) {
-      return reply.code(400).send();
-    }
-
-    // Insert the new todo into the database
-    result = await db('todos').insert(
+    // Insert the new user into the database
+    result = await db('users').insert(
       {
-        title,
-        description,
-        done: false,
-        user_id: userId,
+        email,
+        user_name: userName,
+        first_name: firstName,
+        last_name: lastName,
       },
       'id'
     );
@@ -161,75 +156,78 @@ async function getUsers(request, reply) {
   return reply.code(201).send({ id: result[0].id });
 }
 
-// retrieves todo
-async function getTodo(request, reply) {
+// retrieves user
+async function getUser(request, reply) {
   // attempt to lookup todo
-  let todo;
+  let user;
   try {
-    todo = await db('todos')
+    user = await db('users')
       .select({
         id: 'id',
-        title: 'title',
-        description: 'description',
-        done: 'done',
-        userId: 'user_id',
+        email: 'email',
+        userName: 'user_name',
+        firstName: 'first_name',
+        lastName: 'last_name',
       })
       .where({ id: request.params.id })
       .first();
   } catch (error) {
-    //istanbul ignore next 
+    //istanbul ignore next
     return reply.code(500).send({ message: error.message });
   }
 
-  // TODO: check todo was found
-  if (!todo) {
-    return reply.code(404).send('Todo not found');
+  // User: check User was found
+  if (!user) {
+    return reply.code(404).send('User not found');
   }
 
   // send response
-  return reply.code(200).send(todo);
+  return reply.code(200).send(user);
 }
 
-async function updateTodo(request, reply) {
-  const todoId = request.params.id;
+async function updateUser(request, reply) {
+  const userId = request.params.id;
 
-  const existingTodo = await db('todos').where('id', todoId).first();
+  const existingUser = await db('users').where('id', userId).first();
 
-  if (!existingTodo) {
+  if (!existingUser) {
     return reply.code(404).send({ message: error.message });
   }
-  // attempt to lookup todo
-  const { title, description, done } = request.body;
-  let todo;
+  // attempt to lookup user
+  const { email, userName, firstName, lastName } = request.body;
+  let user;
   try {
-    await db('todos')
-      .where({ id: request.params.id })
-      .update({ title: title, description: description, done: done });
+    await db('users').where({ id: request.params.id }).update({
+      email: email,
+      user_name: userName,
+      first_name: firstName,
+      last_name: lastName,
+    });
 
-    todo = await db('todos')
+    user = await db('users')
       .where({ id: request.params.id })
       .select({
         id: 'id',
-        title: 'title',
-        description: 'description',
-        done: 'done',
-        userId: 'user_id',
+        email: 'email',
+        userName: 'user_name',
+        firstName: 'first_name',
+        lastName: 'last_name',
       })
       .first();
   } catch (error) {
-    //istanbul ignore next 
+    //istanbul ignore next
     return reply.code(500).send({ message: error.message });
   }
 
   // send response
-  return reply.code(201).send(todo);
+  return reply.code(201).send(user);
 }
 
-async function deleteTodo(request, reply) {
-  // attempt to lookup todo
+async function deleteUser(request, reply) {
+  // attempt to lookup user
   let result;
   try {
-    result = await db('todos').del().where({ id: request.params.id });
+    result = await db('users').del().where({ id: request.params.id });
   } catch (error) {
     //istanbul ignore next
     return reply.code(500).send({ message: error.message });
@@ -243,4 +241,3 @@ async function deleteTodo(request, reply) {
   // send response
   return reply.code(204).send();
 }
-  */

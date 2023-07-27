@@ -178,23 +178,24 @@ describe('Endpoint: /users', () => {
           '00000000-0000-0000-0000-000000000000'
         )}`,
         body: {
-          title: 'Clean House',
-          description: 'Wash dishes',
-          userId: 1,
+          email: 'laquan@abc.com',
+          userName: 'laquan123',
+          firstName: 'Laquan',
+          lastName: 'Newell',
         },
       };
 
       const outputs = {
         status: 201,
         body: {
-          id: 1,
+          id: 4,
         },
       };
 
       // trigger
       const response = await app.inject({
         method: 'POST',
-        url: '/todos',
+        url: '/users',
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
@@ -203,7 +204,6 @@ describe('Endpoint: /users', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
       expect(response.json()).toStrictEqual(outputs.body);
     });
-
     it('returns 400, if no body', async () => {
       expect.assertions(1);
 
@@ -229,7 +229,7 @@ describe('Endpoint: /users', () => {
       // trigger
       const response = await app.inject({
         method: 'POST',
-        url: '/todos',
+        url: '/users',
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
@@ -264,7 +264,7 @@ describe('Endpoint: /users', () => {
       // trigger
       const response = await app.inject({
         method: 'POST',
-        url: '/todos',
+        url: '/users',
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
@@ -302,7 +302,7 @@ describe('Endpoint: /users', () => {
       // trigger
       const response = await app.inject({
         method: 'POST',
-        url: '/todos',
+        url: '/users',
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
@@ -311,7 +311,7 @@ describe('Endpoint: /users', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
-    it('returns 400, if no title', async () => {
+    it('returns 400, if no email', async () => {
       expect.assertions(1);
 
       // setup
@@ -330,9 +330,10 @@ describe('Endpoint: /users', () => {
           '00000000-0000-0000-0000-000000000000'
         )}`,
         body: {
-          // title: 'Clean House',
-          description: 'Wash dishes',
-          userId: 1,
+          //email: 'laquan@abc.com',
+          userName: 'laquan123',
+          firstName: 'Laquan',
+          lastName: 'Newell',
         },
       };
 
@@ -343,7 +344,7 @@ describe('Endpoint: /users', () => {
       // trigger
       const response = await app.inject({
         method: 'POST',
-        url: '/todos',
+        url: '/users',
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
@@ -352,9 +353,11 @@ describe('Endpoint: /users', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
-    // TODO: returns 400, invalid userId
-    it('returns 400, if userId is invalid', async () => {
+    it('returns 400, if no user name', async () => {
       expect.assertions(1);
+
+      // setup
+      await db('users').insert(testData.users);
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -369,9 +372,10 @@ describe('Endpoint: /users', () => {
           '00000000-0000-0000-0000-000000000000'
         )}`,
         body: {
-          title: 'Clean House',
-          description: 'Wash dishes',
-          userId: 999,
+          email: 'laquan@abc.com',
+          //userName: 'laquan123',
+          firstName: 'Laquan',
+          lastName: 'Newell',
         },
       };
 
@@ -382,7 +386,91 @@ describe('Endpoint: /users', () => {
       // trigger
       const response = await app.inject({
         method: 'POST',
-        url: '/todos',
+        url: '/users',
+        headers: { Authorization: inputs.authorization },
+        payload: inputs.body,
+      });
+
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+    });
+
+    it('returns 400, if no first name', async () => {
+      expect.assertions(1);
+
+      // setup
+      await db('users').insert(testData.users);
+
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+        body: {
+          email: 'laquan@abc.com',
+          userName: 'laquan123',
+          //firstName: 'Laquan',
+          lastName: 'Newell',
+        },
+      };
+
+      const outputs = {
+        status: 400,
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'POST',
+        url: '/users',
+        headers: { Authorization: inputs.authorization },
+        payload: inputs.body,
+      });
+
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+    });
+
+    it('returns 400, if no last name', async () => {
+      expect.assertions(1);
+
+      // setup
+      await db('users').insert(testData.users);
+
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+        body: {
+          email: 'laquan@abc.com',
+          userName: 'laquan123',
+          firstName: 'Laquan',
+          //lastName: 'Newell',
+        },
+      };
+
+      const outputs = {
+        status: 400,
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'POST',
+        url: '/users',
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
@@ -394,16 +482,15 @@ describe('Endpoint: /users', () => {
 });
 
 // =============================================================================
-// Endpoint: /todos/:id:
+// Endpoint: /users/:id:
 // =============================================================================
-describe('Endpoint: /todos/:id:', () => {
+describe('Endpoint: /users/:id:', () => {
   describe('GET', () => {
     it('returns 200', async () => {
       expect.assertions(2);
 
       // setup
       await db('users').insert(testData.users[0]);
-      await db('todos').insert(testData.todos[0]);
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -426,17 +513,17 @@ describe('Endpoint: /todos/:id:', () => {
         status: 200,
         body: {
           id: 1,
-          title: testData.todos[0].title,
-          description: testData.todos[0].description,
-          done: testData.todos[0].done,
-          userId: testData.todos[0].user_id,
+          email: testData.users[0].email,
+          userName: testData.users[0].user_name,
+          firstName: testData.users[0].first_name,
+          lastName: testData.users[0].last_name,
         },
       };
 
       // trigger
       const response = await app.inject({
         method: 'GET',
-        url: `/todos/${inputs.params.id}`,
+        url: `/users/${inputs.params.id}`,
         headers: { Authorization: inputs.authorization },
       });
       // evaluate
@@ -444,7 +531,7 @@ describe('Endpoint: /todos/:id:', () => {
       expect(response.json()).toStrictEqual(outputs.body);
     });
 
-    it('returns 404, if no todo matching id', async () => {
+    it('returns 404, if no user matching id', async () => {
       expect.assertions(1);
 
       // setup
@@ -472,7 +559,7 @@ describe('Endpoint: /todos/:id:', () => {
       // trigger
       const response = await app.inject({
         method: 'GET',
-        url: `/todos/${inputs.params.id}`,
+        url: `/users/${inputs.params.id}`,
         headers: { Authorization: inputs.authorization },
       });
       // evaluate
@@ -486,7 +573,6 @@ describe('Endpoint: /todos/:id:', () => {
 
       // setup
       await db('users').insert(testData.users);
-      await db('todos').insert(testData.todos);
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -501,10 +587,10 @@ describe('Endpoint: /todos/:id:', () => {
           '00000000-0000-0000-0000-000000000000'
         )}`,
         body: {
-          title: 'House Chores',
-          description: 'Wash Dishes',
-          done: false,
-          userId: 1,
+          email: 'laquan@gmail.com',
+          user_name: 'quan1',
+          first_name: 'Quan',
+          last_name: 'New',
         },
         params: {
           id: 1,
@@ -515,28 +601,29 @@ describe('Endpoint: /todos/:id:', () => {
         status: 201,
         body: {
           id: 1,
-          title: testData.todos[1].title,
-          description: testData.todos[0].description,
-          done: testData.todos[0].done,
-          userId: testData.todos[0].user_id,
+          email: testData.users[1].email,
+          userName: testData.users[0].user_name,
+          firstName: testData.users[0].first_name,
+          lastName: testData.users[0].last_name,
         },
       };
 
       // trigger
       const response = await app.inject({
         method: 'PUT',
-        url: `/todos/${inputs.params.id}`,
+        url: `/users/${inputs.params.id}`,
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
+
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
       expect(response.json()).toStrictEqual(outputs.body);
     });
 
-    it('returns 404, if no todo matching id', async () => {
+    it('returns 404, if no user matching id', async () => {
       expect.assertions(1);
-      await db('users').insert(testData.users);
+
       // setup
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -554,10 +641,10 @@ describe('Endpoint: /todos/:id:', () => {
           id: 1,
         },
         body: {
-          title: 'House Chores',
-          description: 'Wash Dishes',
-          done: false,
-          userId: 1,
+          email: 'laquan@yahoo.com',
+          user_name: 'quan1',
+          first_name: 'Quan',
+          last_name: 'New',
         },
       };
 
@@ -568,7 +655,7 @@ describe('Endpoint: /todos/:id:', () => {
       // trigger
       const response = await app.inject({
         method: 'PUT',
-        url: `/todos/${inputs.params.id}`,
+        url: `/users/${inputs.params.id}`,
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
@@ -584,7 +671,6 @@ describe('Endpoint: /todos/:id:', () => {
 
       // setup
       await db('users').insert(testData.users);
-      await db('todos').insert(testData.todos);
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -610,7 +696,7 @@ describe('Endpoint: /todos/:id:', () => {
       // trigger
       const response = await app.inject({
         method: 'DELETE',
-        url: `/todos/${inputs.params.id}`,
+        url: `/users/${inputs.params.id}`,
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
@@ -619,7 +705,7 @@ describe('Endpoint: /todos/:id:', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
-    it('returns 404, if no todo exists', async () => {
+    it('returns 404, if no user exists', async () => {
       expect.assertions(1);
 
       // setup
@@ -647,7 +733,7 @@ describe('Endpoint: /todos/:id:', () => {
       // trigger
       const response = await app.inject({
         method: 'DELETE',
-        url: `/todos/${inputs.params.id}`,
+        url: `/users/${inputs.params.id}`,
         headers: { Authorization: inputs.authorization },
       });
 
