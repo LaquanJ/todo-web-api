@@ -21,82 +21,70 @@ const client = axios.create({
           'Applications.Manage',
           'Todos.Read',
           'Todos.Write',
-          'Todos.Manage'
+          'Todos.Manage',
         ].join(' '),
-        roles: [
-          'Administrator'
-        ],
+        roles: ['Administrator'],
         preferred_username: 'administrator@claconnect.com',
         name: 'CLA Administrator',
-        azp: 'edea3e73-4bc9-47a9-8b6d-f8ff398fe06a'
+        azp: 'edea3e73-4bc9-47a9-8b6d-f8ff398fe06a',
       },
       '00000000-0000-0000-0000-000000000000'
-    )}`
-  }
-})
+    )}`,
+  },
+});
 
 const testData = {
-  applications: [
+  users: [
     {
-      name: 'AIS',
-      app_id: 'edea3e73-4bc9-47a9-8b6d-f8ff398fe06a',
-      created_at: '2023-01-07T18:30:50.321Z',
-      created_by: 'administrator@claconnect.com',
-      updated_at: '2023-01-07T18:30:50.321Z',
-      updated_by: 'administrator@claconnect.com',
-      internal_group_id: 'cc0e1ab9-10a4-4736-bee9-ef2a3e9eb226',
-      internal_group_name: 'AAD-AIS',
-      external_group_id: 'a5761a73-31cd-4069-b407-d1423d30aa31',
-      external_group_name: 'Guest_App [AIS]',
-    }
+      email: 'laquan@yahoo.com',
+      user_name: 'quan1',
+      first_name: 'Quan',
+      last_name: 'New',
+    },
+    {
+      email: 'laquan@gmail.com',
+      user_name: 'quan2',
+      first_name: 'Quan',
+      last_name: 'Newe',
+    },
+    {
+      email: 'laquan@aol.com',
+      user_name: 'quan3',
+      first_name: 'Quan',
+      last_name: 'Newel',
+    },
   ],
   todos: [
     {
-      clientGroupId: '98c7391d-b536-4ee8-963b-e438e432eda2',
-      clientNumber: 'A100000',
-      projectName: 'AIS Engagement 1',
-      projectNumber: '00000001',
-      category: 'My Audit Engagements',
-      itemName: 'AIS Todo 1',
-      itemUrl: 'https://fake.url/1',
-      dueDate: '04/06/2023',
-      status: 'Complete'
+      title: 'House Chores',
+      description: 'Wash Dishes',
+      done: false,
+      user_id: 1,
     },
     {
-      clientGroupId: '98c7391d-b536-4ee8-963b-e438e432eda2',
-      clientNumber: 'A100000',
-      projectName: 'AIS Engagement 1',
-      projectNumber: '00000001',
-      category: 'My Audit Engagements',
-      itemName: 'AIS Todo 2',
-      itemUrl: 'https://fake.url/2',
-      dueDate: '05/06/2023',
-      status: 'In Progress'
+      title: 'House Chores',
+      description: 'Clean Room',
+      done: false,
+      user_id: 2,
     },
     {
-      clientGroupId: '98c7391d-b536-4ee8-963b-e438e432eda2',
-      clientNumber: 'A100000',
-      projectName: 'AIS Engagement 1',
-      projectNumber: '00000001',
-      category: 'My Audit Engagements',
-      itemName: 'AIS Todo 3',
-      itemUrl: 'https://fake.url/3',
-      dueDate: '06/06/2023',
-      status: 'New'
-    }
-  ]
+      title: 'School Work',
+      description: 'Finish Homework in English',
+      done: false,
+      user_id: 3,
+    },
+  ],
 };
 
 beforeAll(async () => {
   // clear todos
   await db('todos').truncate();
-})
+});
 
 afterAll(async () => {
   // clear todos
   await db('todos').truncate();
-})
-
+});
 
 // =============================================================================
 // CRUD
@@ -108,15 +96,15 @@ describe('CRUD for Todos', () => {
     // setup
     const inputs = {
       params: null,
-      data: null
+      data: null,
     };
 
     const outputs = {
       status: 200,
       data: {
         results: [],
-        total: 0
-      }
+        total: 0,
+      },
     };
 
     // trigger
@@ -131,21 +119,22 @@ describe('CRUD for Todos', () => {
     expect.assertions(2);
 
     // setup
-    await db('applications').insert(testData.applications);
+    await db('users').insert(testData.users);
+    await db('todos').insert(testData.todos);
 
     const inputs = [
       {
         params: null,
-        data: testData.todos[0]
+        data: testData.todos[0],
       },
       {
         params: null,
-        data: testData.todos[1]
+        data: testData.todos[1],
       },
       {
         params: null,
-        data: testData.todos[2]
-      }
+        data: testData.todos[2],
+      },
     ];
 
     const outputs = {
@@ -153,52 +142,45 @@ describe('CRUD for Todos', () => {
       data: {
         results: [
           {
-            clientNumber: testData.todos[0].clientNumber,
-            projectName: testData.todos[0].projectName,
-            projectNumber: testData.todos[0].projectNumber,
-            category: testData.todos[0].category,
-            itemName: testData.todos[0].itemName,
-            itemUrl: testData.todos[0].itemUrl,
-            dueDate: testData.todos[0].dueDate,
-            status: testData.todos[0].status
+            id: 1,
+            title: testData.todos[0].title,
+            description: testData.todos[0].description,
+            done: testData.todos[0].done,
+            userId: testData.todos[0].user_id,
           },
           {
-            clientNumber: testData.todos[1].clientNumber,
-            projectName: testData.todos[1].projectName,
-            projectNumber: testData.todos[1].projectNumber,
-            category: testData.todos[1].category,
-            itemName: testData.todos[1].itemName,
-            itemUrl: testData.todos[1].itemUrl,
-            dueDate: testData.todos[1].dueDate,
-            status: testData.todos[1].status
+            id: 2,
+            title: testData.todos[1].title,
+            description: testData.todos[1].description,
+            done: testData.todos[1].done,
+            userId: testData.todos[1].user_id,
           },
           {
-            clientNumber: testData.todos[2].clientNumber,
-            projectName: testData.todos[2].projectName,
-            projectNumber: testData.todos[2].projectNumber,
-            category: testData.todos[2].category,
-            itemName: testData.todos[2].itemName,
-            itemUrl: testData.todos[2].itemUrl,
-            dueDate: testData.todos[2].dueDate,
-            status: testData.todos[2].status
-          }
+            id: 3,
+            title: testData.todos[2].title,
+            description: testData.todos[2].description,
+            done: testData.todos[2].done,
+            userId: testData.todos[2].user_id,
+          },
         ],
-        total: 3
-      }
+        total: 3,
+      },
     };
+
+    //! The test fails here
 
     // trigger
     await client.post('/todos', inputs[0].data).then((res) => {
-      testData.todos[0].id = res.data.id;
-      outputs.data.results[0].id = res.data.id;
+      //testData.todos[0].id = res.data.id;
+      //outputs.data.results[0].id = res.data.id;
     });
 
     await client.post('/todos', inputs[1].data).then((res) => {
-      testData.todos[1].id = res.data.id;
+      //testData.todos[1].id = res.data.id;
       outputs.data.results[1].id = res.data.id;
     });
     await client.post('/todos', inputs[2].data).then((res) => {
-      testData.todos[2].id = res.data.id;
+      //testData.todos[2].id = res.data.id;
       outputs.data.results[2].id = res.data.id;
     });
 
@@ -214,28 +196,19 @@ describe('CRUD for Todos', () => {
     // setup
     const inputs = {
       params: {
-        id: testData.todos[0].id
+        id: testData.todos[0].id,
       },
-      data: null
+      data: null,
     };
     const outputs = {
       status: 200,
       data: {
         id: 1,
-        createdAt: expect.anything(),
-        createdBy: 'administrator@claconnect.com',
-        updatedAt: expect.anything(),
-        updatedBy: 'administrator@claconnect.com',
-        clientGroupId: testData.todos[0].clientGroupId,
-        clientNumber: testData.todos[0].clientNumber,
-        projectName: testData.todos[0].projectName,
-        projectNumber: testData.todos[0].projectNumber,
-        category: testData.todos[0].category,
-        itemName: testData.todos[0].itemName,
-        itemUrl: testData.todos[0].itemUrl,
-        dueDate: testData.todos[0].dueDate,
-        status: testData.todos[0].status
-      }
+        title: testData.todos[0].title,
+        description: testData.todos[0].description,
+        done: testData.todos[0].done,
+        userId: testData.todos[0].user_id,
+      },
     };
 
     // trigger
@@ -244,7 +217,7 @@ describe('CRUD for Todos', () => {
     // evaluate
     expect(response.status).toStrictEqual(outputs.status);
     expect(response.data).toStrictEqual(outputs.data);
-  })
+  });
 
   it('updates todo 2', async () => {
     expect.assertions(2);
@@ -252,9 +225,9 @@ describe('CRUD for Todos', () => {
     // setup
     const inputs = {
       params: {
-        id: testData.todos[1].id
+        id: testData.todos[1].id,
       },
-      data: testData.todos[0]
+      data: testData.todos[0],
     };
 
     const outputs = {
@@ -263,40 +236,28 @@ describe('CRUD for Todos', () => {
         results: [
           {
             id: testData.todos[0].id,
-            clientNumber: testData.todos[0].clientNumber,
-            projectName: testData.todos[0].projectName,
-            projectNumber: testData.todos[0].projectNumber,
-            category: testData.todos[0].category,
-            itemName: testData.todos[0].itemName,
-            itemUrl: testData.todos[0].itemUrl,
-            dueDate: testData.todos[0].dueDate,
-            status: testData.todos[0].status
+            title: testData.todos[0].title,
+            description: testData.todos[0].description,
+            done: testData.todos[0].done,
+            userId: testData.todos[0].user_id,
           },
           {
             id: testData.todos[1].id,
-            clientNumber: testData.todos[0].clientNumber,
-            projectName: testData.todos[0].projectName,
-            projectNumber: testData.todos[0].projectNumber,
-            category: testData.todos[0].category,
-            itemName: testData.todos[0].itemName,
-            itemUrl: testData.todos[0].itemUrl,
-            dueDate: testData.todos[0].dueDate,
-            status: testData.todos[0].status
+            title: testData.todos[1].title,
+            description: testData.todos[1].description,
+            done: testData.todos[1].done,
+            userId: testData.todos[1].user_id,
           },
           {
             id: testData.todos[2].id,
-            clientNumber: testData.todos[2].clientNumber,
-            projectName: testData.todos[2].projectName,
-            projectNumber: testData.todos[2].projectNumber,
-            category: testData.todos[2].category,
-            itemName: testData.todos[2].itemName,
-            itemUrl: testData.todos[2].itemUrl,
-            dueDate: testData.todos[2].dueDate,
-            status: testData.todos[2].status
-          }
+            title: testData.todos[2].title,
+            description: testData.todos[2].description,
+            done: testData.todos[2].done,
+            userId: testData.todos[2].user_id,
+          },
         ],
-        total: 3
-      }
+        total: 3,
+      },
     };
 
     // trigger
@@ -306,7 +267,7 @@ describe('CRUD for Todos', () => {
     const response = await client.get('/todos');
     expect(response.status).toStrictEqual(outputs.status);
     expect(response.data).toStrictEqual(outputs.data);
-  })
+  });
 
   it('deletes todo 3', async () => {
     expect.assertions(2);
@@ -314,9 +275,9 @@ describe('CRUD for Todos', () => {
     // setup
     const inputs = {
       params: {
-        id: testData.todos[2].id
+        id: testData.todos[2].id,
       },
-      data: null
+      data: null,
     };
 
     const outputs = {
@@ -325,29 +286,28 @@ describe('CRUD for Todos', () => {
         results: [
           {
             id: testData.todos[0].id,
-            clientNumber: testData.todos[0].clientNumber,
-            projectName: testData.todos[0].projectName,
-            projectNumber: testData.todos[0].projectNumber,
-            category: testData.todos[0].category,
-            itemName: testData.todos[0].itemName,
-            itemUrl: testData.todos[0].itemUrl,
-            dueDate: testData.todos[0].dueDate,
-            status: testData.todos[0].status
+            title: testData.todos[0].title,
+            description: testData.todos[0].description,
+            done: testData.todos[0].done,
+            userId: testData.todos[0].user_id,
           },
           {
             id: testData.todos[1].id,
-            clientNumber: testData.todos[0].clientNumber,
-            projectName: testData.todos[0].projectName,
-            projectNumber: testData.todos[0].projectNumber,
-            category: testData.todos[0].category,
-            itemName: testData.todos[0].itemName,
-            itemUrl: testData.todos[0].itemUrl,
-            dueDate: testData.todos[0].dueDate,
-            status: testData.todos[0].status
+            title: testData.todos[1].title,
+            description: testData.todos[1].description,
+            done: testData.todos[1].done,
+            userId: testData.todos[1].user_id,
+          },
+          {
+            id: testData.todos[2].id,
+            title: testData.todos[2].title,
+            description: testData.todos[2].description,
+            done: testData.todos[2].done,
+            userId: testData.todos[2].user_id,
           },
         ],
-        total: 2
-      }
+        total: 2,
+      },
     };
 
     // trigger
@@ -357,5 +317,5 @@ describe('CRUD for Todos', () => {
     const response = await client.get('/todos');
     expect(response.status).toStrictEqual(outputs.status);
     expect(response.data).toStrictEqual(outputs.data);
-  })
+  });
 });
