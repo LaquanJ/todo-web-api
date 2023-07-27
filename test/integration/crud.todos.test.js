@@ -120,20 +120,35 @@ describe('CRUD for Todos', () => {
 
     // setup
     await db('users').insert(testData.users);
-    await db('todos').insert(testData.todos);
+    //await db('todos').insert(testData.todos);
 
     const inputs = [
       {
         params: null,
-        data: testData.todos[0],
+        data: {
+          title: 'House Chores',
+          description: 'Wash Dishes',
+          done: false,
+          userId: testData.todos[0].user_id,
+        },
       },
       {
         params: null,
-        data: testData.todos[1],
+        data: {
+          title: 'House Chores',
+          description: 'Clean Room',
+          done: false,
+          userId: testData.todos[1].user_id,
+        },
       },
       {
         params: null,
-        data: testData.todos[2],
+        data: {
+          title: 'School Work',
+          description: 'Finish Homework in English',
+          done: false,
+          userId: testData.todos[2].user_id,
+        },
       },
     ];
 
@@ -142,21 +157,21 @@ describe('CRUD for Todos', () => {
       data: {
         results: [
           {
-            id: 1,
+            //id: 1,
             title: testData.todos[0].title,
             description: testData.todos[0].description,
             done: testData.todos[0].done,
             userId: testData.todos[0].user_id,
           },
           {
-            id: 2,
+            //id: 2,
             title: testData.todos[1].title,
             description: testData.todos[1].description,
             done: testData.todos[1].done,
             userId: testData.todos[1].user_id,
           },
           {
-            id: 3,
+            //id: 3,
             title: testData.todos[2].title,
             description: testData.todos[2].description,
             done: testData.todos[2].done,
@@ -167,20 +182,18 @@ describe('CRUD for Todos', () => {
       },
     };
 
-    //! The test fails here
-
     // trigger
     await client.post('/todos', inputs[0].data).then((res) => {
-      //testData.todos[0].id = res.data.id;
-      //outputs.data.results[0].id = res.data.id;
+      testData.todos[0].id = res.data.id;
+      outputs.data.results[0].id = res.data.id;
     });
 
     await client.post('/todos', inputs[1].data).then((res) => {
-      //testData.todos[1].id = res.data.id;
+      testData.todos[1].id = res.data.id;
       outputs.data.results[1].id = res.data.id;
     });
     await client.post('/todos', inputs[2].data).then((res) => {
-      //testData.todos[2].id = res.data.id;
+      testData.todos[2].id = res.data.id;
       outputs.data.results[2].id = res.data.id;
     });
 
@@ -227,7 +240,7 @@ describe('CRUD for Todos', () => {
       params: {
         id: testData.todos[1].id,
       },
-      data: testData.todos[0],
+      data: testData.todos[1],
     };
 
     const outputs = {
@@ -297,13 +310,6 @@ describe('CRUD for Todos', () => {
             description: testData.todos[1].description,
             done: testData.todos[1].done,
             userId: testData.todos[1].user_id,
-          },
-          {
-            id: testData.todos[2].id,
-            title: testData.todos[2].title,
-            description: testData.todos[2].description,
-            done: testData.todos[2].done,
-            userId: testData.todos[2].user_id,
           },
         ],
         total: 2,
