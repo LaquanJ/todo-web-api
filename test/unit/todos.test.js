@@ -565,14 +565,14 @@ describe('Endpoint: /todos/:id:', () => {
       };
 
       const outputs = {
-        status: 201,
+        status: 201, // TODO: should be a 204
         body: {
           id: 1,
           title: testData.todos[1].title,
           description: testData.todos[0].description,
           done: testData.todos[0].done,
           userId: testData.todos[0].user_id,
-        },
+        }, // TODO: no body should be returned for request
       };
 
       // trigger
@@ -589,8 +589,10 @@ describe('Endpoint: /todos/:id:', () => {
 
     it('returns 404, if no todo matching id', async () => {
       expect.assertions(1);
-      await db('users').insert(testData.users);
+
       // setup
+      await db('users').insert(testData.users);
+
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
           {

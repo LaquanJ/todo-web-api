@@ -198,12 +198,17 @@ async function updateTodo(request, reply) {
     return reply.code(404).send({ message: error.message });
   }
   // attempt to lookup todo
-  const { title, description, done } = request.body;
+  const { title, description, done, userId } = request.body;
   let todo;
   try {
     await db('todos')
       .where({ id: request.params.id })
-      .update({ title: title, description: description, done: done });
+      .update({
+        title: title,
+        description: description,
+        done: done,
+        user_id: userId,
+      });
 
     todo = await db('todos')
       .where({ id: request.params.id })

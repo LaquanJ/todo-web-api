@@ -163,7 +163,7 @@ describe('Endpoint: /users', () => {
       expect.assertions(2);
 
       // setup
-      await db('users').insert(testData.users);
+      await db('users').insert(testData.users); // TODO: remove
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -188,7 +188,7 @@ describe('Endpoint: /users', () => {
       const outputs = {
         status: 201,
         body: {
-          id: 4,
+          id: 4, // TODO: set to 1 after removing insert
         },
       };
 
@@ -204,8 +204,9 @@ describe('Endpoint: /users', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
       expect(response.json()).toStrictEqual(outputs.body);
     });
+
     it('returns 400, if no body', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       // setup
       const inputs = {
@@ -224,6 +225,11 @@ describe('Endpoint: /users', () => {
 
       const outputs = {
         status: 400,
+        body: {
+          error: 'Bad Request',
+          message: 'body must be object',
+          statusCode: 400
+        }
       };
 
       // trigger
@@ -236,8 +242,10 @@ describe('Endpoint: /users', () => {
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
+      expect(response.json()).toStrictEqual(outputs.body);
     });
 
+    // TODO: this can be removed, covered by required prop tests
     it('returns 400, if empty body', async () => {
       expect.assertions(1);
 
@@ -273,8 +281,9 @@ describe('Endpoint: /users', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
+    // TODO: this can be removed, covered by required prop tests
     it('returns 400, no valid properties', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       // setup
       const inputs = {
@@ -309,13 +318,15 @@ describe('Endpoint: /users', () => {
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
+      expect(response.json()).toStrictEqual(outputs.body);
     });
 
+    // TODO: test response body
     it('returns 400, if no email', async () => {
       expect.assertions(1);
 
       // setup
-      await db('users').insert(testData.users);
+      await db('users').insert(testData.users); // TODO: should not need to insert any data for testing creation
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -353,11 +364,12 @@ describe('Endpoint: /users', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
+    // TODO: test response body
     it('returns 400, if no user name', async () => {
       expect.assertions(1);
 
       // setup
-      await db('users').insert(testData.users);
+      await db('users').insert(testData.users); // TODO: should not need to insert data
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -395,11 +407,12 @@ describe('Endpoint: /users', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
+    // TODO: test response body
     it('returns 400, if no first name', async () => {
       expect.assertions(1);
 
       // setup
-      await db('users').insert(testData.users);
+      await db('users').insert(testData.users); // TODO: remove
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -437,11 +450,12 @@ describe('Endpoint: /users', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
+    // TODO: test response body
     it('returns 400, if no last name', async () => {
       expect.assertions(1);
 
       // setup
-      await db('users').insert(testData.users);
+      await db('users').insert(testData.users); // TODO: remove
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -598,14 +612,14 @@ describe('Endpoint: /users/:id:', () => {
       };
 
       const outputs = {
-        status: 201,
+        status: 201, // TODO: 201 = Created, since we are not creating a 204 might be more appropriate
         body: {
           id: 1,
           email: testData.users[1].email,
           userName: testData.users[0].user_name,
           firstName: testData.users[0].first_name,
           lastName: testData.users[0].last_name,
-        },
+        }, // TODO: No body should be returned for 204
       };
 
       // trigger

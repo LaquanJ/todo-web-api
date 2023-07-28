@@ -59,24 +59,27 @@ const testData = {
       title: 'House Chores',
       description: 'Wash Dishes',
       done: false,
-      user_id: 1,
+      userId: 1,
     },
     {
       title: 'House Chores',
       description: 'Clean Room',
       done: false,
-      user_id: 2,
+      userId: 2,
     },
     {
       title: 'School Work',
       description: 'Finish Homework in English',
       done: false,
-      user_id: 3,
+      userId: 3,
     },
   ],
 };
 
 beforeAll(async () => {
+  // add user records
+  await db('users').insert(testData.users);
+
   // clear todos
   await db('todos').truncate();
 });
@@ -119,36 +122,18 @@ describe('CRUD for Todos', () => {
     expect.assertions(2);
 
     // setup
-    await db('users').insert(testData.users);
-    //await db('todos').insert(testData.todos);
-
     const inputs = [
       {
         params: null,
-        data: {
-          title: 'House Chores',
-          description: 'Wash Dishes',
-          done: false,
-          userId: testData.todos[0].user_id,
-        },
+        data: testData.todos[0],
       },
       {
         params: null,
-        data: {
-          title: 'House Chores',
-          description: 'Clean Room',
-          done: false,
-          userId: testData.todos[1].user_id,
-        },
+        data: testData.todos[1],
       },
       {
         params: null,
-        data: {
-          title: 'School Work',
-          description: 'Finish Homework in English',
-          done: false,
-          userId: testData.todos[2].user_id,
-        },
+        data: testData.todos[2],
       },
     ];
 
@@ -161,21 +146,21 @@ describe('CRUD for Todos', () => {
             title: testData.todos[0].title,
             description: testData.todos[0].description,
             done: testData.todos[0].done,
-            userId: testData.todos[0].user_id,
+            userId: testData.todos[0].userId,
           },
           {
             //id: 2,
             title: testData.todos[1].title,
             description: testData.todos[1].description,
             done: testData.todos[1].done,
-            userId: testData.todos[1].user_id,
+            userId: testData.todos[1].userId,
           },
           {
             //id: 3,
             title: testData.todos[2].title,
             description: testData.todos[2].description,
             done: testData.todos[2].done,
-            userId: testData.todos[2].user_id,
+            userId: testData.todos[2].userId,
           },
         ],
         total: 3,
@@ -220,7 +205,7 @@ describe('CRUD for Todos', () => {
         title: testData.todos[0].title,
         description: testData.todos[0].description,
         done: testData.todos[0].done,
-        userId: testData.todos[0].user_id,
+        userId: testData.todos[0].userId,
       },
     };
 
@@ -240,7 +225,7 @@ describe('CRUD for Todos', () => {
       params: {
         id: testData.todos[1].id,
       },
-      data: testData.todos[1],
+      data: testData.todos[0],
     };
 
     const outputs = {
@@ -252,21 +237,21 @@ describe('CRUD for Todos', () => {
             title: testData.todos[0].title,
             description: testData.todos[0].description,
             done: testData.todos[0].done,
-            userId: testData.todos[0].user_id,
+            userId: testData.todos[0].userId,
           },
           {
             id: testData.todos[1].id,
-            title: testData.todos[1].title,
-            description: testData.todos[1].description,
-            done: testData.todos[1].done,
-            userId: testData.todos[1].user_id,
+            title: testData.todos[0].title,
+            description: testData.todos[0].description,
+            done: testData.todos[0].done,
+            userId: testData.todos[0].userId,
           },
           {
             id: testData.todos[2].id,
             title: testData.todos[2].title,
             description: testData.todos[2].description,
             done: testData.todos[2].done,
-            userId: testData.todos[2].user_id,
+            userId: testData.todos[2].userId,
           },
         ],
         total: 3,
@@ -302,14 +287,14 @@ describe('CRUD for Todos', () => {
             title: testData.todos[0].title,
             description: testData.todos[0].description,
             done: testData.todos[0].done,
-            userId: testData.todos[0].user_id,
+            userId: testData.todos[0].userId,
           },
           {
             id: testData.todos[1].id,
-            title: testData.todos[1].title,
-            description: testData.todos[1].description,
-            done: testData.todos[1].done,
-            userId: testData.todos[1].user_id,
+            title: testData.todos[0].title,
+            description: testData.todos[0].description,
+            done: testData.todos[0].done,
+            userId: testData.todos[0].userId,
           },
         ],
         total: 2,

@@ -107,9 +107,9 @@ async function getUsers(request, reply) {
       .select({
         id: 'id',
         email: 'email',
-        user_name: 'user_name',
-        first_name: 'first_name',
-        last_name: 'last_name',
+        userName: 'user_name',
+        firstName: 'first_name',
+        lastName: 'last_name',
       })
       .orderBy('id')
       .offset(request.query.offset ? request.query.offset : 0)

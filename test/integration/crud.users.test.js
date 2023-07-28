@@ -37,56 +37,32 @@ const testData = {
   users: [
     {
       email: 'laquan@yahoo.com',
-      user_name: 'quan1',
-      first_name: 'Quan',
-      last_name: 'New',
+      userName: 'quan1',
+      firstName: 'Quan',
+      lastName: 'New',
     },
     {
       email: 'laquan@gmail.com',
-      user_name: 'quan2',
-      first_name: 'Quan',
-      last_name: 'Newe',
+      userName: 'quan2',
+      firstName: 'Quan',
+      lastName: 'Newe',
     },
     {
       email: 'laquan@aol.com',
-      user_name: 'quan3',
-      first_name: 'Quan',
-      last_name: 'Newel',
-    },
-  ],
-  todos: [
-    {
-      title: 'House Chores',
-      description: 'Wash Dishes',
-      done: false,
-      user_id: 1,
-    },
-    {
-      title: 'House Chores',
-      description: 'Clean Room',
-      done: false,
-      user_id: 2,
-    },
-    {
-      title: 'School Work',
-      description: 'Finish Homework in English',
-      done: false,
-      user_id: 3,
+      userName: 'quan3',
+      firstName: 'Quan',
+      lastName: 'Newel',
     },
   ],
 };
 
 beforeAll(async () => {
-  await db('todos').truncate();
-
   // clear users and reset auto increment
   await db('users').del();
   await db.raw(`DBCC CHECKIDENT ('users', RESEED, 0)`);
 });
 
 afterAll(async () => {
-  await db('todos').truncate();
-
   // clear users and reset auto increment
   await db('users').del();
   await db.raw(`DBCC CHECKIDENT ('users', RESEED, 0)`);
@@ -100,11 +76,6 @@ describe('CRUD for Users', () => {
     expect.assertions(2);
 
     // setup
-    const inputs = {
-      params: null,
-      data: null,
-    };
-
     const outputs = {
       status: 200,
       data: {
@@ -125,35 +96,32 @@ describe('CRUD for Users', () => {
     expect.assertions(2);
 
     // setup
-    //await db('users').insert(testData.users);
-    //await db('todos').insert(testData.todos);
-
     const inputs = [
       {
         params: null,
         data: {
           email: testData.users[0].email,
-          userName: testData.users[0].user_name,
-          firstName: testData.users[0].first_name,
-          lastName: testData.users[0].last_name,
+          userName: testData.users[0].userName,
+          firstName: testData.users[0].firstName,
+          lastName: testData.users[0].lastName,
         },
       },
       {
         params: null,
         data: {
           email: testData.users[1].email,
-          userName: testData.users[1].user_name,
-          firstName: testData.users[1].first_name,
-          lastName: testData.users[1].last_name,
+          userName: testData.users[1].userName,
+          firstName: testData.users[1].firstName,
+          lastName: testData.users[1].lastName,
         },
       },
       {
         params: null,
         data: {
           email: testData.users[2].email,
-          userName: testData.users[2].user_name,
-          firstName: testData.users[2].first_name,
-          lastName: testData.users[2].last_name,
+          userName: testData.users[2].userName,
+          firstName: testData.users[2].firstName,
+          lastName: testData.users[2].lastName,
         },
       },
     ];
@@ -165,28 +133,29 @@ describe('CRUD for Users', () => {
           {
             //id: 1,
             email: testData.users[0].email,
-            user_name: testData.users[0].user_name,
-            first_name: testData.users[0].first_name,
-            last_name: testData.users[0].last_name,
+            userName: testData.users[0].userName,
+            firstName: testData.users[0].firstName,
+            lastName: testData.users[0].lastName,
           },
           {
             //id: 2,
             email: testData.users[1].email,
-            user_name: testData.users[1].user_name,
-            first_name: testData.users[1].first_name,
-            last_name: testData.users[1].last_name,
+            userName: testData.users[1].userName,
+            firstName: testData.users[1].firstName,
+            lastName: testData.users[1].lastName,
           },
           {
             //id: 3,
             email: testData.users[2].email,
-            user_name: testData.users[2].user_name,
-            first_name: testData.users[2].first_name,
-            last_name: testData.users[2].last_name,
+            userName: testData.users[2].userName,
+            firstName: testData.users[2].firstName,
+            lastName: testData.users[2].lastName,
           },
         ],
         total: 3,
       },
     };
+
     // trigger
     await client.post('/users', inputs[0].data).then((res) => {
       testData.users[0].id = res.data.id;
@@ -197,6 +166,7 @@ describe('CRUD for Users', () => {
       testData.users[1].id = res.data.id;
       outputs.data.results[1].id = res.data.id;
     });
+
     await client.post('/users', inputs[2].data).then((res) => {
       testData.users[2].id = res.data.id;
       outputs.data.results[2].id = res.data.id;
@@ -223,9 +193,9 @@ describe('CRUD for Users', () => {
       data: {
         id: testData.users[0].id,
         email: testData.users[0].email,
-        userName: testData.users[0].user_name,
-        firstName: testData.users[0].first_name,
-        lastName: testData.users[0].last_name,
+        userName: testData.users[0].userName,
+        firstName: testData.users[0].firstName,
+        lastName: testData.users[0].lastName,
       },
     };
 
@@ -245,7 +215,7 @@ describe('CRUD for Users', () => {
       params: {
         id: testData.users[1].id,
       },
-      data: testData.users[1],
+      data: testData.users[0],
     };
 
     const outputs = {
@@ -255,23 +225,23 @@ describe('CRUD for Users', () => {
           {
             id: testData.users[0].id,
             email: testData.users[0].email,
-            user_name: testData.users[0].user_name,
-            first_name: testData.users[0].first_name,
-            last_name: testData.users[0].last_name,
+            userName: testData.users[0].userName,
+            firstName: testData.users[0].firstName,
+            lastName: testData.users[0].lastName,
           },
           {
             id: testData.users[1].id,
-            email: testData.users[1].email,
-            user_name: testData.users[1].user_name,
-            first_name: testData.users[1].first_name,
-            last_name: testData.users[1].last_name,
+            email: testData.users[0].email,
+            userName: testData.users[0].userName,
+            firstName: testData.users[0].firstName,
+            lastName: testData.users[0].lastName,
           },
           {
             id: testData.users[2].id,
             email: testData.users[2].email,
-            user_name: testData.users[2].user_name,
-            first_name: testData.users[2].first_name,
-            last_name: testData.users[2].last_name,
+            userName: testData.users[2].userName,
+            firstName: testData.users[2].firstName,
+            lastName: testData.users[2].lastName,
           },
         ],
         total: 3,
@@ -283,8 +253,6 @@ describe('CRUD for Users', () => {
 
     // evaluate
     const response = await client.get('/users');
-    console.log(response.data);
-    console.log(outputs.data);
     expect(response.status).toStrictEqual(outputs.status);
     expect(response.data).toStrictEqual(outputs.data);
   });
@@ -307,16 +275,16 @@ describe('CRUD for Users', () => {
           {
             id: testData.users[0].id,
             email: testData.users[0].email,
-            user_name: testData.users[0].user_name,
-            first_name: testData.users[0].first_name,
-            last_name: testData.users[0].last_name,
+            userName: testData.users[0].userName,
+            firstName: testData.users[0].firstName,
+            lastName: testData.users[0].lastName,
           },
           {
             id: testData.users[1].id,
-            email: testData.users[1].email,
-            user_name: testData.users[1].user_name,
-            first_name: testData.users[1].first_name,
-            last_name: testData.users[1].last_name,
+            email: testData.users[0].email,
+            userName: testData.users[0].userName,
+            firstName: testData.users[0].firstName,
+            lastName: testData.users[0].lastName,
           },
         ],
         total: 2,
