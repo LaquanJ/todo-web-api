@@ -34,9 +34,9 @@ export default async function routes(fastify, options) {
         properties: {
           title: { type: 'string' },
           description: { type: 'string' },
-          userId: { type: 'integer' }, // TODO: userId should be required + unit test for when it isn't
+          userId: { type: 'integer' },
         },
-        required: ['title'],
+        required: ['title', 'userId'],
       },
     },
     handler: createTodos,
@@ -181,7 +181,6 @@ async function getTodo(request, reply) {
     return reply.code(500).send({ message: error.message });
   }
 
-  // TODO: check todo was found
   if (!todo) {
     return reply.code(404).send('Todo not found');
   }

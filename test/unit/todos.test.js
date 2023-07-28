@@ -367,9 +367,9 @@ describe('Endpoint: /todos', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
-    // TODO: returns 400, invalid userId
     it('returns 400, if userId is invalid', async () => {
       expect.assertions(1);
+      await db('users').insert(testData.users);
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -387,6 +387,44 @@ describe('Endpoint: /todos', () => {
           title: 'Clean House',
           description: 'Wash dishes',
           userId: 999,
+        },
+      };
+
+      const outputs = {
+        status: 400,
+      };
+
+      // trigger
+      const response = await app.inject({
+        method: 'POST',
+        url: '/todos',
+        headers: { Authorization: inputs.authorization },
+        payload: inputs.body,
+      });
+
+      // evaluate
+      expect(response.statusCode).toStrictEqual(outputs.status);
+    });
+
+    it('returns 400, if no userId ', async () => {
+      expect.assertions(1);
+
+      const inputs = {
+        authorization: `Bearer ${await jwt.sign(
+          {
+            oid: '00000000-0000-0000-0000-000000000000',
+            scp: 'Todos.Read',
+            roles: ['Administrator'],
+            preferred_username: 'administrator@claconnect.com',
+            name: 'CLA Administrator',
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
+          },
+          '00000000-0000-0000-0000-000000000000'
+        )}`,
+        body: {
+          title: 'Clean House',
+          description: 'Wash dishes',
+          //userId: 1,
         },
       };
 

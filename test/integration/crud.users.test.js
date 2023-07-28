@@ -77,20 +77,26 @@ const testData = {
 };
 
 beforeAll(async () => {
-  // clear todos
   await db('todos').truncate();
+
+  // clear users and reset auto increment
+  await db('users').del();
+  await db.raw(`DBCC CHECKIDENT ('users', RESEED, 0)`);
 });
 
 afterAll(async () => {
-  // clear todos
   await db('todos').truncate();
+
+  // clear users and reset auto increment
+  await db('users').del();
+  await db.raw(`DBCC CHECKIDENT ('users', RESEED, 0)`);
 });
 
 // =============================================================================
 // CRUD
 // =============================================================================
-describe('CRUD for Todos', () => {
-  it('has 0 todos', async () => {
+describe('CRUD for Users', () => {
+  it('has 0 users', async () => {
     expect.assertions(2);
 
     // setup
@@ -108,46 +114,46 @@ describe('CRUD for Todos', () => {
     };
 
     // trigger
-    const response = await client.get('/todos');
+    const response = await client.get('/users');
 
     // evaluate
     expect(response.status).toStrictEqual(outputs.status);
     expect(response.data).toStrictEqual(outputs.data);
   });
 
-  it('creates 3 todos', async () => {
+  it('creates 3 users', async () => {
     expect.assertions(2);
 
     // setup
-    await db('users').insert(testData.users);
+    //await db('users').insert(testData.users);
     //await db('todos').insert(testData.todos);
 
     const inputs = [
       {
         params: null,
         data: {
-          title: 'House Chores',
-          description: 'Wash Dishes',
-          done: false,
-          userId: testData.todos[0].user_id,
+          email: testData.users[0].email,
+          userName: testData.users[0].user_name,
+          firstName: testData.users[0].first_name,
+          lastName: testData.users[0].last_name,
         },
       },
       {
         params: null,
         data: {
-          title: 'House Chores',
-          description: 'Clean Room',
-          done: false,
-          userId: testData.todos[1].user_id,
+          email: testData.users[1].email,
+          userName: testData.users[1].user_name,
+          firstName: testData.users[1].first_name,
+          lastName: testData.users[1].last_name,
         },
       },
       {
         params: null,
         data: {
-          title: 'School Work',
-          description: 'Finish Homework in English',
-          done: false,
-          userId: testData.todos[2].user_id,
+          email: testData.users[2].email,
+          userName: testData.users[2].user_name,
+          firstName: testData.users[2].first_name,
+          lastName: testData.users[2].last_name,
         },
       },
     ];
@@ -158,89 +164,88 @@ describe('CRUD for Todos', () => {
         results: [
           {
             //id: 1,
-            title: testData.todos[0].title,
-            description: testData.todos[0].description,
-            done: testData.todos[0].done,
-            userId: testData.todos[0].user_id,
+            email: testData.users[0].email,
+            user_name: testData.users[0].user_name,
+            first_name: testData.users[0].first_name,
+            last_name: testData.users[0].last_name,
           },
           {
             //id: 2,
-            title: testData.todos[1].title,
-            description: testData.todos[1].description,
-            done: testData.todos[1].done,
-            userId: testData.todos[1].user_id,
+            email: testData.users[1].email,
+            user_name: testData.users[1].user_name,
+            first_name: testData.users[1].first_name,
+            last_name: testData.users[1].last_name,
           },
           {
             //id: 3,
-            title: testData.todos[2].title,
-            description: testData.todos[2].description,
-            done: testData.todos[2].done,
-            userId: testData.todos[2].user_id,
+            email: testData.users[2].email,
+            user_name: testData.users[2].user_name,
+            first_name: testData.users[2].first_name,
+            last_name: testData.users[2].last_name,
           },
         ],
         total: 3,
       },
     };
-
     // trigger
-    await client.post('/todos', inputs[0].data).then((res) => {
-      testData.todos[0].id = res.data.id;
+    await client.post('/users', inputs[0].data).then((res) => {
+      testData.users[0].id = res.data.id;
       outputs.data.results[0].id = res.data.id;
     });
 
-    await client.post('/todos', inputs[1].data).then((res) => {
-      testData.todos[1].id = res.data.id;
+    await client.post('/users', inputs[1].data).then((res) => {
+      testData.users[1].id = res.data.id;
       outputs.data.results[1].id = res.data.id;
     });
-    await client.post('/todos', inputs[2].data).then((res) => {
-      testData.todos[2].id = res.data.id;
+    await client.post('/users', inputs[2].data).then((res) => {
+      testData.users[2].id = res.data.id;
       outputs.data.results[2].id = res.data.id;
     });
 
     // evaluate
-    const response = await client.get('/todos');
+    const response = await client.get('/users');
     expect(response.status).toStrictEqual(outputs.status);
     expect(response.data).toStrictEqual(outputs.data);
   });
 
-  it('reads todo 1', async () => {
+  it('reads user 1', async () => {
     expect.assertions(2);
 
     // setup
     const inputs = {
       params: {
-        id: testData.todos[0].id,
+        id: testData.users[0].id,
       },
       data: null,
     };
     const outputs = {
       status: 200,
       data: {
-        id: 1,
-        title: testData.todos[0].title,
-        description: testData.todos[0].description,
-        done: testData.todos[0].done,
-        userId: testData.todos[0].user_id,
+        id: testData.users[0].id,
+        email: testData.users[0].email,
+        userName: testData.users[0].user_name,
+        firstName: testData.users[0].first_name,
+        lastName: testData.users[0].last_name,
       },
     };
 
     // trigger
-    const response = await client.get(`/todos/${inputs.params.id}`);
+    const response = await client.get(`/users/${inputs.params.id}`);
 
     // evaluate
     expect(response.status).toStrictEqual(outputs.status);
     expect(response.data).toStrictEqual(outputs.data);
   });
 
-  it('updates todo 2', async () => {
+  it('updates user 2', async () => {
     expect.assertions(2);
 
     // setup
     const inputs = {
       params: {
-        id: testData.todos[1].id,
+        id: testData.users[1].id,
       },
-      data: testData.todos[1],
+      data: testData.users[1],
     };
 
     const outputs = {
@@ -248,25 +253,25 @@ describe('CRUD for Todos', () => {
       data: {
         results: [
           {
-            id: testData.todos[0].id,
-            title: testData.todos[0].title,
-            description: testData.todos[0].description,
-            done: testData.todos[0].done,
-            userId: testData.todos[0].user_id,
+            id: testData.users[0].id,
+            email: testData.users[0].email,
+            user_name: testData.users[0].user_name,
+            first_name: testData.users[0].first_name,
+            last_name: testData.users[0].last_name,
           },
           {
-            id: testData.todos[1].id,
-            title: testData.todos[1].title,
-            description: testData.todos[1].description,
-            done: testData.todos[1].done,
-            userId: testData.todos[1].user_id,
+            id: testData.users[1].id,
+            email: testData.users[1].email,
+            user_name: testData.users[1].user_name,
+            first_name: testData.users[1].first_name,
+            last_name: testData.users[1].last_name,
           },
           {
-            id: testData.todos[2].id,
-            title: testData.todos[2].title,
-            description: testData.todos[2].description,
-            done: testData.todos[2].done,
-            userId: testData.todos[2].user_id,
+            id: testData.users[2].id,
+            email: testData.users[2].email,
+            user_name: testData.users[2].user_name,
+            first_name: testData.users[2].first_name,
+            last_name: testData.users[2].last_name,
           },
         ],
         total: 3,
@@ -274,21 +279,23 @@ describe('CRUD for Todos', () => {
     };
 
     // trigger
-    await client.put(`/todos/${inputs.params.id}`, inputs.data);
+    await client.put(`/users/${inputs.params.id}`, inputs.data);
 
     // evaluate
-    const response = await client.get('/todos');
+    const response = await client.get('/users');
+    console.log(response.data);
+    console.log(outputs.data);
     expect(response.status).toStrictEqual(outputs.status);
     expect(response.data).toStrictEqual(outputs.data);
   });
 
-  it('deletes todo 3', async () => {
+  it('deletes user 3', async () => {
     expect.assertions(2);
 
     // setup
     const inputs = {
       params: {
-        id: testData.todos[2].id,
+        id: testData.users[2].id,
       },
       data: null,
     };
@@ -298,18 +305,18 @@ describe('CRUD for Todos', () => {
       data: {
         results: [
           {
-            id: testData.todos[0].id,
-            title: testData.todos[0].title,
-            description: testData.todos[0].description,
-            done: testData.todos[0].done,
-            userId: testData.todos[0].user_id,
+            id: testData.users[0].id,
+            email: testData.users[0].email,
+            user_name: testData.users[0].user_name,
+            first_name: testData.users[0].first_name,
+            last_name: testData.users[0].last_name,
           },
           {
-            id: testData.todos[1].id,
-            title: testData.todos[1].title,
-            description: testData.todos[1].description,
-            done: testData.todos[1].done,
-            userId: testData.todos[1].user_id,
+            id: testData.users[1].id,
+            email: testData.users[1].email,
+            user_name: testData.users[1].user_name,
+            first_name: testData.users[1].first_name,
+            last_name: testData.users[1].last_name,
           },
         ],
         total: 2,
@@ -317,10 +324,10 @@ describe('CRUD for Todos', () => {
     };
 
     // trigger
-    await client.delete(`/todos/${inputs.params.id}`);
+    await client.delete(`/users/${inputs.params.id}`);
 
     // evaluate
-    const response = await client.get('/todos');
+    const response = await client.get('/users');
     expect(response.status).toStrictEqual(outputs.status);
     expect(response.data).toStrictEqual(outputs.data);
   });
