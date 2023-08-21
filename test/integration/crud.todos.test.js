@@ -97,10 +97,6 @@ describe('CRUD for Todos', () => {
     expect.assertions(2);
 
     // setup
-    const inputs = {
-      params: null,
-      data: null,
-    };
 
     const outputs = {
       status: 200,

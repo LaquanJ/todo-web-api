@@ -201,14 +201,12 @@ async function updateTodo(request, reply) {
   const { title, description, done, userId } = request.body;
   let todo;
   try {
-    await db('todos')
-      .where({ id: request.params.id })
-      .update({
-        title: title,
-        description: description,
-        done: done,
-        user_id: userId,
-      });
+    await db('todos').where({ id: request.params.id }).update({
+      title: title,
+      description: description,
+      done: done,
+      user_id: userId,
+    });
 
     todo = await db('todos')
       .where({ id: request.params.id })
@@ -226,7 +224,7 @@ async function updateTodo(request, reply) {
   }
 
   // send response
-  return reply.code(201).send(todo);
+  return reply.code(204).send();
 }
 
 async function deleteTodo(request, reply) {

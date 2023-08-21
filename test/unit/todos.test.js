@@ -239,79 +239,11 @@ describe('Endpoint: /todos', () => {
 
       const outputs = {
         status: 400,
-      };
-
-      // trigger
-      const response = await app.inject({
-        method: 'POST',
-        url: '/todos',
-        headers: { Authorization: inputs.authorization },
-        payload: inputs.body,
-      });
-
-      // evaluate
-      expect(response.statusCode).toStrictEqual(outputs.status);
-    });
-
-    it('returns 400, if empty body', async () => {
-      expect.assertions(1);
-
-      // setup
-      const inputs = {
-        authorization: `Bearer ${await jwt.sign(
-          {
-            oid: '00000000-0000-0000-0000-000000000000',
-            scp: 'Todos.Read',
-            roles: ['Administrator'],
-            preferred_username: 'administrator@claconnect.com',
-            name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
-          },
-          '00000000-0000-0000-0000-000000000000'
-        )}`,
-        body: {},
-      };
-
-      const outputs = {
-        status: 400,
-      };
-
-      // trigger
-      const response = await app.inject({
-        method: 'POST',
-        url: '/todos',
-        headers: { Authorization: inputs.authorization },
-        payload: inputs.body,
-      });
-
-      // evaluate
-      expect(response.statusCode).toStrictEqual(outputs.status);
-    });
-
-    it('returns 400, no valid properties', async () => {
-      expect.assertions(1);
-
-      // setup
-      const inputs = {
-        authorization: `Bearer ${await jwt.sign(
-          {
-            oid: '00000000-0000-0000-0000-000000000000',
-            scp: 'Todos.Read',
-            roles: ['Administrator'],
-            preferred_username: 'administrator@claconnect.com',
-            name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
-          },
-          '00000000-0000-0000-0000-000000000000'
-        )}`,
         body: {
-          prop1: '1',
-          prop2: '2',
+          error: 'Bad Request',
+          message: 'body must be object',
+          statusCode: 400,
         },
-      };
-
-      const outputs = {
-        status: 400,
       };
 
       // trigger
@@ -353,6 +285,11 @@ describe('Endpoint: /todos', () => {
 
       const outputs = {
         status: 400,
+        body: {
+          error: 'Bad Request',
+          message: 'body must be have required property "title',
+          statusCode: 400,
+        },
       };
 
       // trigger
@@ -362,7 +299,6 @@ describe('Endpoint: /todos', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
-
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
@@ -401,7 +337,6 @@ describe('Endpoint: /todos', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
-
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
@@ -430,6 +365,11 @@ describe('Endpoint: /todos', () => {
 
       const outputs = {
         status: 400,
+        body: {
+          error: 'Bad Request',
+          message: 'body must have required property "userId',
+          statusCode: 400,
+        },
       };
 
       // trigger
@@ -439,7 +379,6 @@ describe('Endpoint: /todos', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
-
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
@@ -534,8 +473,8 @@ describe('Endpoint: /todos/:id:', () => {
   });
 
   describe('PUT', () => {
-    it('returns 201', async () => {
-      expect.assertions(2);
+    it('returns 204', async () => {
+      expect.assertions(1);
 
       // setup
       await db('users').insert(testData.users);
@@ -565,14 +504,7 @@ describe('Endpoint: /todos/:id:', () => {
       };
 
       const outputs = {
-        status: 201, // TODO: should be a 204
-        body: {
-          id: 1,
-          title: testData.todos[1].title,
-          description: testData.todos[0].description,
-          done: testData.todos[0].done,
-          userId: testData.todos[0].user_id,
-        }, // TODO: no body should be returned for request
+        status: 204,
       };
 
       // trigger
@@ -584,7 +516,7 @@ describe('Endpoint: /todos/:id:', () => {
       });
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
-      expect(response.json()).toStrictEqual(outputs.body);
+      //expect(response.json()).toStrictEqual(outputs.body);
     });
 
     it('returns 404, if no todo matching id', async () => {

@@ -121,23 +121,23 @@ describe('Endpoint: /users', () => {
             {
               id: 1,
               email: testData.users[0].email,
-              user_name: testData.users[0].user_name,
-              first_name: testData.users[0].first_name,
-              last_name: testData.users[0].last_name,
+              userName: testData.users[0].user_name,
+              firstName: testData.users[0].first_name,
+              lastName: testData.users[0].last_name,
             },
             {
               id: 2,
               email: testData.users[1].email,
-              user_name: testData.users[1].user_name,
-              first_name: testData.users[1].first_name,
-              last_name: testData.users[1].last_name,
+              userName: testData.users[1].user_name,
+              firstName: testData.users[1].first_name,
+              lastName: testData.users[1].last_name,
             },
             {
               id: 3,
               email: testData.users[2].email,
-              user_name: testData.users[2].user_name,
-              first_name: testData.users[2].first_name,
-              last_name: testData.users[2].last_name,
+              userName: testData.users[2].user_name,
+              firstName: testData.users[2].first_name,
+              lastName: testData.users[2].last_name,
             },
           ],
           total: 3,
@@ -163,7 +163,6 @@ describe('Endpoint: /users', () => {
       expect.assertions(2);
 
       // setup
-      await db('users').insert(testData.users); // TODO: remove
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -188,7 +187,7 @@ describe('Endpoint: /users', () => {
       const outputs = {
         status: 201,
         body: {
-          id: 4, // TODO: set to 1 after removing insert
+          id: 1,
         },
       };
 
@@ -228,86 +227,10 @@ describe('Endpoint: /users', () => {
         body: {
           error: 'Bad Request',
           message: 'body must be object',
-          statusCode: 400
-        }
-      };
-
-      // trigger
-      const response = await app.inject({
-        method: 'POST',
-        url: '/users',
-        headers: { Authorization: inputs.authorization },
-        payload: inputs.body,
-      });
-
-      // evaluate
-      expect(response.statusCode).toStrictEqual(outputs.status);
-      expect(response.json()).toStrictEqual(outputs.body);
-    });
-
-    // TODO: this can be removed, covered by required prop tests
-    it('returns 400, if empty body', async () => {
-      expect.assertions(1);
-
-      // setup
-      const inputs = {
-        authorization: `Bearer ${await jwt.sign(
-          {
-            oid: '00000000-0000-0000-0000-000000000000',
-            scp: 'Todos.Read',
-            roles: ['Administrator'],
-            preferred_username: 'administrator@claconnect.com',
-            name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
-          },
-          '00000000-0000-0000-0000-000000000000'
-        )}`,
-        body: {},
-      };
-
-      const outputs = {
-        status: 400,
-      };
-
-      // trigger
-      const response = await app.inject({
-        method: 'POST',
-        url: '/users',
-        headers: { Authorization: inputs.authorization },
-        payload: inputs.body,
-      });
-
-      // evaluate
-      expect(response.statusCode).toStrictEqual(outputs.status);
-    });
-
-    // TODO: this can be removed, covered by required prop tests
-    it('returns 400, no valid properties', async () => {
-      expect.assertions(2);
-
-      // setup
-      const inputs = {
-        authorization: `Bearer ${await jwt.sign(
-          {
-            oid: '00000000-0000-0000-0000-000000000000',
-            scp: 'Todos.Read',
-            roles: ['Administrator'],
-            preferred_username: 'administrator@claconnect.com',
-            name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
-          },
-          '00000000-0000-0000-0000-000000000000'
-        )}`,
-        body: {
-          prop1: '1',
-          prop2: '2',
+          statusCode: 400,
         },
       };
 
-      const outputs = {
-        status: 400,
-      };
-
       // trigger
       const response = await app.inject({
         method: 'POST',
@@ -315,18 +238,15 @@ describe('Endpoint: /users', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
-
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
       expect(response.json()).toStrictEqual(outputs.body);
     });
 
-    // TODO: test response body
     it('returns 400, if no email', async () => {
       expect.assertions(1);
 
       // setup
-      await db('users').insert(testData.users); // TODO: should not need to insert any data for testing creation
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -350,6 +270,11 @@ describe('Endpoint: /users', () => {
 
       const outputs = {
         status: 400,
+        body: {
+          error: 'Bad Request',
+          message: 'body must have required property "email"',
+          statusCode: 400,
+        },
       };
 
       // trigger
@@ -359,17 +284,14 @@ describe('Endpoint: /users', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
-
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
-    // TODO: test response body
     it('returns 400, if no user name', async () => {
       expect.assertions(1);
 
       // setup
-      await db('users').insert(testData.users); // TODO: should not need to insert data
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -393,6 +315,11 @@ describe('Endpoint: /users', () => {
 
       const outputs = {
         status: 400,
+        body: {
+          error: 'Bad Request',
+          message: 'body must have required property "userName"',
+          statusCode: 400,
+        },
       };
 
       // trigger
@@ -402,17 +329,14 @@ describe('Endpoint: /users', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
-
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
-    // TODO: test response body
     it('returns 400, if no first name', async () => {
       expect.assertions(1);
 
       // setup
-      await db('users').insert(testData.users); // TODO: remove
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -436,6 +360,11 @@ describe('Endpoint: /users', () => {
 
       const outputs = {
         status: 400,
+        body: {
+          error: 'Bad Request',
+          message: 'body must have required property "firstName"',
+          statusCode: 400,
+        },
       };
 
       // trigger
@@ -450,12 +379,10 @@ describe('Endpoint: /users', () => {
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
 
-    // TODO: test response body
     it('returns 400, if no last name', async () => {
       expect.assertions(1);
 
       // setup
-      await db('users').insert(testData.users); // TODO: remove
 
       const inputs = {
         authorization: `Bearer ${await jwt.sign(
@@ -479,6 +406,11 @@ describe('Endpoint: /users', () => {
 
       const outputs = {
         status: 400,
+        body: {
+          error: 'Bad Request',
+          message: 'body must have required property "lastName"',
+          statusCode: 400,
+        },
       };
 
       // trigger
@@ -488,7 +420,6 @@ describe('Endpoint: /users', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
-
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
@@ -582,8 +513,8 @@ describe('Endpoint: /users/:id:', () => {
   });
 
   describe('PUT', () => {
-    it('returns 201', async () => {
-      expect.assertions(2);
+    it('returns 204', async () => {
+      expect.assertions(1);
 
       // setup
       await db('users').insert(testData.users);
@@ -612,14 +543,7 @@ describe('Endpoint: /users/:id:', () => {
       };
 
       const outputs = {
-        status: 201, // TODO: 201 = Created, since we are not creating a 204 might be more appropriate
-        body: {
-          id: 1,
-          email: testData.users[1].email,
-          userName: testData.users[0].user_name,
-          firstName: testData.users[0].first_name,
-          lastName: testData.users[0].last_name,
-        }, // TODO: No body should be returned for 204
+        status: 204,
       };
 
       // trigger
@@ -632,7 +556,6 @@ describe('Endpoint: /users/:id:', () => {
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
-      expect(response.json()).toStrictEqual(outputs.body);
     });
 
     it('returns 404, if no user matching id', async () => {

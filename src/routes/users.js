@@ -220,7 +220,7 @@ async function updateUser(request, reply) {
   }
 
   // send response
-  return reply.code(201).send(user);
+  return reply.code(204).send();
 }
 
 async function deleteUser(request, reply) {
