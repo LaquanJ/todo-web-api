@@ -3,14 +3,27 @@ info:
   title: To Dos API
   version: 1.0.0
 servers:
-  - url: https://api.server.test/v1
+  - url: http://localhost:8080
+    description: Local
+  - url: TBD
+    description: Cloud DEV
+  - url: TBD
+    description: Cloud QA
+  - url: TBD
+    description: Cloud UAT
+  - url: TBD
+    description: Cloud PROD
+
 paths:
+  # ============================================================================
+  # todos
+  # ============================================================================
   /todos:
     get:
-      tags: 
+      tags:
         - Todos
       summary: Get all todos
-      description: > 
+      description: >
         Returns a list of details for all todos
       operationId: getTodos
       responses:
@@ -21,7 +34,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/todo"
+                  $ref: '#/components/schemas/todo'
               examples:
                 normal:
                   summary: Normal
@@ -30,7 +43,7 @@ paths:
                       title: Start chores
                       description: Put dishes in dishwasher
                       done: false
-                      user: 
+                      user:
                         id: 1
                         email: jeff@abc.com
                         userName: jeff123
@@ -40,7 +53,7 @@ paths:
                       title: Go to store
                       description: Buy bread and milk
                       done: false
-                      user: 
+                      user:
                         id: 1
                         email: jeff@abc.com
                         userName: jeff123
@@ -50,7 +63,7 @@ paths:
                       title: Dentist appointment
                       description: Go to dentist appointment at 2
                       done: false
-                      user: 
+                      user:
                         id: 1
                         email: jeff@abc.com
                         userName: jeff123
@@ -60,10 +73,10 @@ paths:
                   summary: Empty
                   value: []
         default:
-          $ref: "#/components/responses/UnexpectedError"
-          
+          $ref: '#/components/responses/UnexpectedError'
+
     post:
-      tags: 
+      tags:
         - Todos
       summary: Creates a new todo
       description: >
@@ -86,7 +99,7 @@ paths:
                 - title
       responses:
         201:
-          description: Successfully created todo 
+          description: Successfully created todo
           content:
             application/json:
               schema:
@@ -95,7 +108,7 @@ paths:
                   id:
                     type: integer
         default:
-          $ref: "#/components/responses/UnexpectedError"
+          $ref: '#/components/responses/UnexpectedError'
 
   /todos/{id}:
     get:
@@ -153,17 +166,17 @@ paths:
                     title: Start chores
                     description: Put dishes in dishwasher
                     done: false
-                    user: 
+                    user:
                       id: 1
                       email: jeff@abc.com
                       userName: jeff123
                       firstName: Jeff
                       lastName: Green
         404:
-          $ref: "#/components/responses/NotFoundError"
+          $ref: '#/components/responses/NotFoundError'
         default:
-          $ref: "#/components/responses/UnexpectedError"
-  
+          $ref: '#/components/responses/UnexpectedError'
+
     put:
       tags:
         - Todos
@@ -194,32 +207,13 @@ paths:
                 userId:
                   type: integer
       responses:
-        201:
+        204:
           description: Successfully updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 2
-                  title:
-                    type: string
-                    example: Read a book
-                  description:
-                    type: string
-                    example: Read 10 pages out of book
-                  done:
-                    type: boolean
-                    example: false
-                  userId:
-                    type: integer
-                    example: 1
+
         404:
-          $ref: "#/components/responses/NotFoundError"
+          $ref: '#/components/responses/NotFoundError'
         default:
-          $ref: "#/components/responses/UnexpectedError"
+          $ref: '#/components/responses/UnexpectedError'
 
     delete:
       tags:
@@ -240,16 +234,19 @@ paths:
         204:
           description: Todo deleted
         404:
-          $ref: "#/components/responses/NotFoundError"
+          $ref: '#/components/responses/NotFoundError'
         default:
-          $ref: "#/components/responses/UnexpectedError"
-  
+          $ref: '#/components/responses/UnexpectedError'
+
+  # ============================================================================
+  # users
+  # ============================================================================
   /users:
     get:
-      tags: 
+      tags:
         - Users
       summary: Get all users
-      description: > 
+      description: >
         Returns a list of users
       operationId: getUsers
       responses:
@@ -260,7 +257,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/user"
+                  $ref: '#/components/schemas/user'
               examples:
                 normal:
                   summary: Normal
@@ -284,13 +281,13 @@ paths:
                   summary: Empty
                   value: []
         default:
-          $ref: "#/components/responses/UnexpectedError"
-          
+          $ref: '#/components/responses/UnexpectedError'
+
     post:
-      tags: 
+      tags:
         - Users
       summary: Create a new User
-      description: > 
+      description: >
         Creates a new user
       operationId: createUsers
       requestBody:
@@ -315,7 +312,7 @@ paths:
                 - lastName
       responses:
         201:
-          description: Successfully created user 
+          description: Successfully created user
           content:
             application/json:
               schema:
@@ -324,10 +321,10 @@ paths:
                   id:
                     type: integer
         400:
-          $ref: "#/components/responses/BadRequestError"
+          $ref: '#/components/responses/BadRequestError'
         default:
-          $ref: "#/components/responses/UnexpectedError"
-          
+          $ref: '#/components/responses/UnexpectedError'
+
   /users/{id}:
     get:
       tags:
@@ -367,13 +364,13 @@ paths:
                     type: string
                     example: Newell
         404:
-          $ref: "#/components/responses/NotFoundError"
+          $ref: '#/components/responses/NotFoundError'
         default:
-          $ref: "#/components/responses/UnexpectedError"
-  
+          $ref: '#/components/responses/UnexpectedError'
+
     put:
       tags:
-      - Users
+        - Users
       summary: Updates user by id
       description: >
         Updates user item with the corresponding id
@@ -398,17 +395,17 @@ paths:
                   type: string
                 firstName:
                   type: string
-                lastName: 
+                lastName:
                   type: string
       responses:
-        201:
+        204:
           description: Successfully updated
         400:
-          $ref: "#/components/responses/BadRequestError"
+          $ref: '#/components/responses/BadRequestError'
         404:
-          $ref: "#/components/responses/NotFoundError"
+          $ref: '#/components/responses/NotFoundError'
         default:
-          $ref: "#/components/responses/UnexpectedError"
+          $ref: '#/components/responses/UnexpectedError'
 
     delete:
       tags:
@@ -428,10 +425,10 @@ paths:
         204:
           description: User deleted
         404:
-          $ref: "#/components/responses/NotFoundError"
+          $ref: '#/components/responses/NotFoundError'
         default:
-          $ref: "#/components/responses/UnexpectedError"
-        
+          $ref: '#/components/responses/UnexpectedError'
+
 components:
   schemas:
     user:
@@ -446,11 +443,11 @@ components:
         userName:
           type: string
           description: Unique username created by user
-          
-        firstName: 
+
+        firstName:
           type: string
           description: The users first name
-        lastName: 
+        lastName:
           type: string
           description: The users last name
 
@@ -471,7 +468,7 @@ components:
           description: Represents if the todo is completed or not
           default: false
         user:
-          $ref: "#/components/schemas/user"
+          $ref: '#/components/schemas/user'
 
     Error:
       type: object
@@ -488,35 +485,34 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
           examples:
             normal:
               summary: Normal
               value:
-                code: "NotFound"
-                message: "Unable to find the requested resource"
+                code: 'NotFound'
+                message: 'Unable to find the requested resource'
     UnexpectedError:
       description: An unexpected error has occurred
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
           examples:
             normal:
               summary: Normal
               value:
-                code: "Internal"
-                message: "An unexpected error has occurred please try again later"
+                code: 'Internal'
+                message: 'An unexpected error has occurred please try again later'
     BadRequestError:
-     description: The server could not understand the request
-     content:
-       application/json:
-         schema:
-           $ref: "#/components/schemas/Error"
-         examples:
-           normal:
-             summary: Normal
-             value:
-               code: "BadRequest"
-               message: "Invalid request"
-    
+      description: The server could not understand the request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            normal:
+              summary: Normal
+              value:
+                code: 'BadRequest'
+                message: 'Invalid request'

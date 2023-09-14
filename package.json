@@ -1,0 +1,45 @@
+{
+  "name": "todo-web-api",
+  "type": "module",
+  "private": true,
+  "version": "1.0.0",
+  "description": "An API serving Todos.",
+  "author": "Laquan Newell",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "start-watch": "nodemon --inspect=0.0.0.0:9229 ./src/server.js",
+    "start-debug": "nodemon --inspect-brk=0.0.0.0:9229 ./src/server.js",
+    "test": "NODE_ENV=test node --experimental-vm-modules node_modules/.bin/jest --testTimeout 10000 --forceExit --runInBand",
+    "test:unit": "NODE_ENV=test JEST_JUNIT_OUTPUT_NAME=unit.xml node --experimental-vm-modules node_modules/.bin/jest --testTimeout 10000 --forceExit --coverage unit",
+    "test:integration": "NODE_ENV=test JEST_JUNIT_OUTPUT_NAME=integration.xml node --experimental-vm-modules node_modules/.bin/jest --testTimeout 10000 --forceExit integration",
+    "test-debug": "NODE_ENV=test node --inspect-brk=0.0.0.0:9230 --experimental-vm-modules ./node_modules/.bin/jest --testTimeout 10000 --forceExit --runInBand --reporters=default"
+  },
+  "imports": {
+    "#src/*": "./src/*",
+    "#database/*": "./src/database/*",
+    "#routes/*": "./src/routes/*",
+    "#utilities/*": "./src/utilities/*"
+  },
+  "dependencies": {
+    "@fastify/cors": "8.2.0",
+    "@fastify/compress": "6.2.0",
+    "@fastify/jwt": "6.7.0",
+    "@fastify/websocket": "7.1.2",
+    "fastify": "4.14.1",
+    "knex": "2.4.2",
+    "mssql": "7.3.0",
+    "applicationinsights": "2.1.5",
+    "jwks-rsa": "2.0.5",
+    "axios": "0.24.0"
+  },
+  "devDependencies": {
+    "jest": "27.0.4",
+    "jest-junit": "12.2.0",
+    "jsonwebtoken": "9.0.0",
+    "nodemon": "2.0.7"
+  },
+  "overrides": {
+    "@xmldom/xmldom": "0.8.6",
+    "jsonwebtoken": "9.0.0"
+  }
+}

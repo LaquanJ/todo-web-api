@@ -1,0 +1,86 @@
+version: "3.4"
+
+services:
+  # ============================================================================
+  # api
+  # ============================================================================
+  app:
+    build:
+      context: .
+      args:
+        - NODE_ENV=development
+    command: >
+      sh -c './wait-for.sh -t 300 sql:1433 \
+        -- npm run start-watch'
+    ports:
+      - 8080:8080
+      - 9229:9229
+      - 9230:9230
+    volumes:
+      # application
+      - ./src:/opt/app/src
+
+      # specification
+      - ./doc/openapi.yaml:/opt/app/doc/openapi.yaml
+
+      # testing
+      - ./config/jest.config.js:/opt/app/jest.config.js
+      - ./test:/opt/app/test
+    environment:
+      # logging
+      - LOG_LEVEL=debug
+
+      # database
+      - DB_SQL_HOST=sql
+      - DB_SQL_PORT=1433
+      - DB_SQL_USERNAME=sa
+      - DB_SQL_PASSWORD=Abcde12345
+      - DB_SQL_DATABASE=api
+
+      # azure active directory
+      - AZURE_AD_AUTHORITY=https://login.microsoftonline.com/common
+      - AZURE_AD_TENANT=00000000-0000-0000-0000-000000000000
+      - AZURE_AD_CLIENT_ID=00000000-0000-0000-0000-000000000000
+      - AZURE_AD_CLIENT_SECRET=1234
+
+      # application insights
+      - APPINSIGHTS_INSTRUMENTATIONKEY=00000000-0000-0000-0000-000000000000
+      - APPINSIGHTS_ROLENAME=todo-web-api-dev
+
+      # fix for WSL2 file watch limitation
+      - CHOKIDAR_USEPOLLING=true
+    healthcheck:
+      disable: true
+    depends_on:
+      - sql
+
+  # ============================================================================
+  # persistence
+  # ============================================================================
+  sql:
+    build:
+      context: .
+      dockerfile: Dockerfile.sql
+    ports:
+      - 1433:1433
+    environment:
+      # configuration
+      - SA_PASSWORD=Abcde12345
+      - INIT_DB_NAME=api
+    volumes:
+      - mssql:/var/opt/mssql
+
+  # ============================================================================
+  # utility
+  # ============================================================================
+  swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - 50000:8080
+    environment:
+      - URL=./openapi.yaml
+    volumes:
+      - ./doc/openapi.yaml:/usr/share/nginx/html/openapi.yaml
+
+volumes:
+  mssql:
