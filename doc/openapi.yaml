@@ -72,8 +72,21 @@ paths:
                 empty:
                   summary: Empty
                   value: []
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        403:
+          $ref: "#/components/responses/ForbiddenError"
         default:
           $ref: '#/components/responses/UnexpectedError'
+      security:
+        - bearer:
+          # scopes (e.g. scp)
+          - Todos.Read 
+          - Todos.Manage
+
+          # roles
+          - Administrator
+          - User
 
     post:
       tags:
@@ -107,8 +120,21 @@ paths:
                 properties:
                   id:
                     type: integer
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        403:
+          $ref: "#/components/responses/ForbiddenError"
         default:
           $ref: '#/components/responses/UnexpectedError'
+      security:
+        - bearer:
+          # scopes (e.g. scp)
+          - Todos.Write 
+          - Todos.Manage
+
+          # roles
+          - Administrator
+          - User
 
   /todos/{id}:
     get:
@@ -172,10 +198,23 @@ paths:
                       userName: jeff123
                       firstName: Jeff
                       lastName: Green
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        403:
+          $ref: "#/components/responses/ForbiddenError"
         404:
           $ref: '#/components/responses/NotFoundError'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      security:
+        - bearer:
+          # scopes (e.g. scp)
+          - Todos.Read 
+          - Todos.Manage
+
+          # roles
+          - Administrator
+          - User
 
     put:
       tags:
@@ -209,11 +248,23 @@ paths:
       responses:
         204:
           description: Successfully updated
-
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        403:
+          $ref: "#/components/responses/ForbiddenError"
         404:
           $ref: '#/components/responses/NotFoundError'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      security:
+        - bearer:
+          # scopes (e.g. scp)
+          - Todos.Write 
+          - Todos.Manage
+
+          # roles
+          - Administrator
+          - User
 
     delete:
       tags:
@@ -229,14 +280,24 @@ paths:
           description: Id of the todo that needs to be updated
           schema:
             type: integer
-
       responses:
         204:
           description: Todo deleted
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        403:
+          $ref: "#/components/responses/ForbiddenError"
         404:
           $ref: '#/components/responses/NotFoundError'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      security:
+        - bearer:
+          # scopes (e.g. scp)
+          - Todos.Manage
+
+          # roles
+          - Administrator
 
   # ============================================================================
   # users
@@ -280,8 +341,20 @@ paths:
                 empty:
                   summary: Empty
                   value: []
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        403:
+          $ref: "#/components/responses/ForbiddenError"
         default:
           $ref: '#/components/responses/UnexpectedError'
+      security:
+        - bearer:
+          # scopes (e.g. scp)
+          - Users.Read 
+          - Users.Manage
+
+          # roles
+          - Administrator
 
     post:
       tags:
@@ -320,10 +393,22 @@ paths:
                 properties:
                   id:
                     type: integer
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        403:
+          $ref: "#/components/responses/ForbiddenError"
         400:
           $ref: '#/components/responses/BadRequestError'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      security:
+        - bearer:
+          # scopes (e.g. scp)
+          - Users.Write 
+          - Users.Manage
+
+          # roles
+          - Administrator
 
   /users/{id}:
     get:
@@ -363,10 +448,22 @@ paths:
                   lastName:
                     type: string
                     example: Newell
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        403:
+          $ref: "#/components/responses/ForbiddenError"
         404:
           $ref: '#/components/responses/NotFoundError'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      security:
+        - bearer:
+          # scopes (e.g. scp)
+          - Users.Read 
+          - Users.Manage
+
+          # roles
+          - Administrator
 
     put:
       tags:
@@ -402,10 +499,22 @@ paths:
           description: Successfully updated
         400:
           $ref: '#/components/responses/BadRequestError'
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        403:
+          $ref: "#/components/responses/ForbiddenError"
         404:
           $ref: '#/components/responses/NotFoundError'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      security:
+        - bearer:
+          # scopes (e.g. scp)
+          - Users.Write 
+          - Users.Manage
+
+          # roles
+          - Administrator
 
     delete:
       tags:
@@ -424,12 +533,28 @@ paths:
       responses:
         204:
           description: User deleted
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        403:
+          $ref: "#/components/responses/ForbiddenError"
         404:
           $ref: '#/components/responses/NotFoundError'
         default:
           $ref: '#/components/responses/UnexpectedError'
+      security:
+        - bearer:
+          # scopes (e.g. scp)
+          - Users.Manage
+
+          # roles
+          - Administrator
 
 components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     user:
       type: object
@@ -480,6 +605,30 @@ components:
           type: string
           description: Describes the error returned
   responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            normal:
+              summary: Normal
+              value:
+                code: "Unauthorized"
+                message: "some error details"
+    ForbiddenError:
+      description: Insufficient permissions to access resource
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            normal:
+              summary: Normal
+              value:
+                code: "Forbidden"
+                message: "some error details"
     NotFoundError:
       description: The requested resource could not be found
       content:

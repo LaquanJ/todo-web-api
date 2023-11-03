@@ -62,4 +62,6 @@ export async function initialize() {
     console.log('SQL database is empty...seeding.');
     await seed();
   }
+
+  
 }

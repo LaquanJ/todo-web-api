@@ -13,21 +13,22 @@ export default async function routes(fastify, options) {
   fastify.route({
     method: 'GET',
     url: '/todos',
-    // preValidation: [fastify.authenticate, fastify.authorize],
-    // config: {
-    //   validScopes: ['Todos.Read', 'Todos.Manage'],
-    //   validRoles: ['Administrator', 'Client']
-    // },
+    preValidation: [fastify.authenticate, fastify.authorize],
+    config: {
+      validScopes: ['Todos.Read', 'Todos.Manage'],
+      validRoles: ['Administrator', 'User']
+    },
     handler: getTodos,
   });
+
   fastify.route({
     method: 'POST',
     url: '/todos',
-    // preValidation: [fastify.authenticate, fastify.authorize],
-    // config: {
-    //   validScopes: ['Todos.Read', 'Todos.Manage'],
-    //   validRoles: ['Administrator', 'Client']
-    // },
+    preValidation: [fastify.authenticate, fastify.authorize],
+    config: {
+      validScopes: ['Todos.Write', 'Todos.Manage'],
+      validRoles: ['Administrator', 'User']
+    },
     schema: {
       body: {
         type: 'object',
@@ -45,22 +46,22 @@ export default async function routes(fastify, options) {
   fastify.route({
     method: 'GET',
     url: '/todos/:id',
-    // preValidation: [fastify.authenticate, fastify.authorize],
-    // config: {
-    //   validScopes: ['Todos.Read', 'Todos.Manage'],
-    //   validRoles: ['Administrator', 'Client']
-    // },
+    preValidation: [fastify.authenticate, fastify.authorize],
+    config: {
+      validScopes: ['Todos.Read', 'Todos.Manage'],
+      validRoles: ['Administrator', 'User']
+    },
     handler: getTodo,
   });
 
   fastify.route({
     method: 'PUT',
     url: '/todos/:id',
-    // preValidation: [fastify.authenticate, fastify.authorize],
-    // config: {
-    //   validScopes: ['Todos.Read', 'Todos.Manage'],
-    //   validRoles: ['Administrator', 'Client']
-    // },
+    preValidation: [fastify.authenticate, fastify.authorize],
+    config: {
+      validScopes: ['Todos.Write', 'Todos.Manage'],
+      validRoles: ['Administrator', 'User']
+    },
     schema: {
       body: {
         type: 'object',
@@ -78,11 +79,11 @@ export default async function routes(fastify, options) {
   fastify.route({
     method: 'DELETE',
     url: '/todos/:id',
-    // preValidation: [fastify.authenticate, fastify.authorize],
-    // config: {
-    //   validScopes: ['Todos.Read', 'Todos.Manage'],
-    //   validRoles: ['Administrator', 'Client']
-    // },
+    preValidation: [fastify.authenticate, fastify.authorize],
+    config: {
+      validScopes: ['Todos.Manage'],
+      validRoles: ['Administrator']
+    },
     handler: deleteTodo,
   });
 }
