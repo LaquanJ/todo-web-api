@@ -16,18 +16,18 @@ export default async function routes(fastify, options) {
     preValidation: [fastify.authenticate, fastify.authorize],
     config: {
       validScopes: ['Users.Read', 'Users.Manage'],
-      validRoles: ['Administrator']
+      validRoles: ['Administrator'],
     },
     handler: getUsers,
   });
-  
+
   fastify.route({
     method: 'POST',
     url: '/users',
     preValidation: [fastify.authenticate, fastify.authorize],
     config: {
       validScopes: ['Users.Write', 'Users.Manage'],
-      validRoles: ['Administrator']
+      validRoles: ['Administrator'],
     },
     schema: {
       body: {
@@ -50,7 +50,7 @@ export default async function routes(fastify, options) {
     preValidation: [fastify.authenticate, fastify.authorize],
     config: {
       validScopes: ['Users.Read', 'Users.Manage'],
-      validRoles: ['Administrator']
+      validRoles: ['Administrator'],
     },
     handler: getUser,
   });
@@ -61,7 +61,7 @@ export default async function routes(fastify, options) {
     preValidation: [fastify.authenticate, fastify.authorize],
     config: {
       validScopes: ['Users.Write', 'Users.Manage'],
-      validRoles: ['Administrator']
+      validRoles: ['Administrator'],
     },
     schema: {
       body: {
@@ -83,7 +83,7 @@ export default async function routes(fastify, options) {
     preValidation: [fastify.authenticate, fastify.authorize],
     config: {
       validScopes: ['Users.Manage'],
-      validRoles: ['Administrator']
+      validRoles: ['Administrator'],
     },
     handler: deleteUser,
   });

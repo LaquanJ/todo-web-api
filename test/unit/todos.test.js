@@ -166,8 +166,6 @@ describe('Endpoint: /todos', () => {
         headers: { Authorization: inputs.authorization },
       });
 
-      console.log(response.statusCode);
-      console.log(response.json())
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
       expect(response.json()).toStrictEqual(outputs.body);
@@ -185,24 +183,25 @@ describe('Endpoint: /todos', () => {
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           'INVALID KEY'
-        )}`
-      }
+        )}`,
+      };
 
       const outputs = {
         status: 401,
         body: {
-          message: 'Authorization token is invalid: The token signature is invalid.'
-        }
-      }
+          message:
+            'Authorization token is invalid: The token signature is invalid.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
         method: 'GET',
         url: '/todos',
-        headers: { 'Authorization': inputs.authorization }
+        headers: { Authorization: inputs.authorization },
       });
 
       // evaluate
@@ -222,24 +221,24 @@ describe('Endpoint: /todos', () => {
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           '00000000-0000-0000-0000-000000000000'
-        )}`
-      }
+        )}`,
+      };
 
       const outputs = {
         status: 403,
         body: {
-          message: 'Client not allowed.'
-        }
-      }
+          message: 'Client not allowed.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
         method: 'GET',
         url: '/todos',
-        headers: { 'Authorization': inputs.authorization }
+        headers: { Authorization: inputs.authorization },
       });
 
       // evaluate
@@ -259,24 +258,24 @@ describe('Endpoint: /todos', () => {
             roles: ['INVALID ROLE'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           '00000000-0000-0000-0000-000000000000'
-        )}`
-      }
+        )}`,
+      };
 
       const outputs = {
         status: 403,
         body: {
-          message: 'User not allowed.'
-        }
-      }
+          message: 'User not allowed.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
         method: 'GET',
         url: '/todos',
-        headers: { 'Authorization': inputs.authorization }
+        headers: { Authorization: inputs.authorization },
       });
 
       // evaluate
@@ -297,7 +296,7 @@ describe('Endpoint: /todos', () => {
         authorization: `Bearer ${await jwt.sign(
           {
             oid: '00000000-0000-0000-0000-000000000000',
-            scp: 'Todos.Read',
+            scp: 'Todos.Write',
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
@@ -327,9 +326,6 @@ describe('Endpoint: /todos', () => {
         payload: inputs.body,
       });
 
-      console.log(response.statusCode);
-      console.log(response.json())
-
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
       expect(response.json()).toStrictEqual(outputs.body);
@@ -347,24 +343,25 @@ describe('Endpoint: /todos', () => {
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           'INVALID KEY'
-        )}`
-      }
+        )}`,
+      };
 
       const outputs = {
         status: 401,
         body: {
-          message: 'Authorization token is invalid: The token signature is invalid.'
-        }
-      }
+          message:
+            'Authorization token is invalid: The token signature is invalid.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
         method: 'POST',
         url: '/todos',
-        headers: { 'Authorization': inputs.authorization }
+        headers: { Authorization: inputs.authorization },
       });
 
       // evaluate
@@ -384,24 +381,24 @@ describe('Endpoint: /todos', () => {
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           '00000000-0000-0000-0000-000000000000'
-        )}`
-      }
+        )}`,
+      };
 
       const outputs = {
         status: 403,
         body: {
-          message: 'Client not allowed.'
-        }
-      }
+          message: 'Client not allowed.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
         method: 'POST',
         url: '/todos',
-        headers: { 'Authorization': inputs.authorization }
+        headers: { Authorization: inputs.authorization },
       });
 
       // evaluate
@@ -421,24 +418,24 @@ describe('Endpoint: /todos', () => {
             roles: ['INVALID ROLE'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           '00000000-0000-0000-0000-000000000000'
-        )}`
-      }
+        )}`,
+      };
 
       const outputs = {
         status: 403,
         body: {
-          message: 'User not allowed.'
-        }
-      }
+          message: 'User not allowed.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
         method: 'POST',
         url: '/todos',
-        headers: { 'Authorization': inputs.authorization }
+        headers: { Authorization: inputs.authorization },
       });
 
       // evaluate
@@ -675,22 +672,22 @@ describe('Endpoint: /todos/:id:', () => {
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           'INVALID KEY'
         )}`,
         params: {
           id: 1,
         },
-        
-      }
+      };
 
       const outputs = {
         status: 401,
         body: {
-          message: 'Authorization token is invalid: The token signature is invalid.'
-        }
-      }
+          message:
+            'Authorization token is invalid: The token signature is invalid.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
@@ -715,21 +712,21 @@ describe('Endpoint: /todos/:id:', () => {
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
         params: {
           id: 1,
         },
-      }
+      };
 
       const outputs = {
         status: 403,
         body: {
-          message: 'Client not allowed.'
-        }
-      }
+          message: 'Client not allowed.',
+        },
+      };
 
       // Trigger
       const response = await app.inject({
@@ -755,21 +752,21 @@ describe('Endpoint: /todos/:id:', () => {
             roles: ['INVALID ROLE'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
         params: {
           id: 1,
         },
-      }
+      };
 
       const outputs = {
         status: 403,
         body: {
-          message: 'User not allowed.'
-        }
-      }
+          message: 'User not allowed.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
@@ -831,7 +828,7 @@ describe('Endpoint: /todos/:id:', () => {
         authorization: `Bearer ${await jwt.sign(
           {
             oid: '00000000-0000-0000-0000-000000000000',
-            scp: 'Todos.Read',
+            scp: 'Todos.Write',
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
@@ -861,6 +858,7 @@ describe('Endpoint: /todos/:id:', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
+
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
     });
@@ -877,7 +875,7 @@ describe('Endpoint: /todos/:id:', () => {
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           'INVALID KEY'
         )}`,
@@ -890,14 +888,15 @@ describe('Endpoint: /todos/:id:', () => {
         params: {
           id: 1,
         },
-      }
+      };
 
       const outputs = {
         status: 401,
         body: {
-          message: 'Authorization token is invalid: The token signature is invalid.'
-        }
-      }
+          message:
+            'Authorization token is invalid: The token signature is invalid.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
@@ -906,8 +905,6 @@ describe('Endpoint: /todos/:id:', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
-
-
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
@@ -926,7 +923,7 @@ describe('Endpoint: /todos/:id:', () => {
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
@@ -939,14 +936,14 @@ describe('Endpoint: /todos/:id:', () => {
         params: {
           id: 1,
         },
-      }
+      };
 
       const outputs = {
         status: 403,
         body: {
-          message: 'Client not allowed.'
-        }
-      }
+          message: 'Client not allowed.',
+        },
+      };
 
       // Trigger
       const response = await app.inject({
@@ -972,7 +969,7 @@ describe('Endpoint: /todos/:id:', () => {
             roles: ['INVALID ROLE'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
@@ -985,14 +982,14 @@ describe('Endpoint: /todos/:id:', () => {
         params: {
           id: 1,
         },
-      }
+      };
 
       const outputs = {
         status: 403,
         body: {
-          message: 'User not allowed.'
-        }
-      }
+          message: 'User not allowed.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
@@ -1016,7 +1013,7 @@ describe('Endpoint: /todos/:id:', () => {
         authorization: `Bearer ${await jwt.sign(
           {
             oid: '00000000-0000-0000-0000-000000000000',
-            scp: 'Todos.Read',
+            scp: 'Todos.Write',
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
@@ -1064,7 +1061,7 @@ describe('Endpoint: /todos/:id:', () => {
         authorization: `Bearer ${await jwt.sign(
           {
             oid: '00000000-0000-0000-0000-000000000000',
-            scp: 'Todos.Read',
+            scp: 'Todos.Manage',
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
@@ -1105,22 +1102,23 @@ describe('Endpoint: /todos/:id:', () => {
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           'INVALID KEY'
         )}`,
-     
+
         params: {
           id: 1,
         },
-      }
+      };
 
       const outputs = {
         status: 401,
         body: {
-          message: 'Authorization token is invalid: The token signature is invalid.'
-        }
-      }
+          message:
+            'Authorization token is invalid: The token signature is invalid.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
@@ -1129,8 +1127,6 @@ describe('Endpoint: /todos/:id:', () => {
         headers: { Authorization: inputs.authorization },
         payload: inputs.body,
       });
-
-
 
       // evaluate
       expect(response.statusCode).toStrictEqual(outputs.status);
@@ -1149,21 +1145,21 @@ describe('Endpoint: /todos/:id:', () => {
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
         params: {
           id: 1,
         },
-      }
+      };
 
       const outputs = {
         status: 403,
         body: {
-          message: 'Client not allowed.'
-        }
-      }
+          message: 'Client not allowed.',
+        },
+      };
 
       // Trigger
       const response = await app.inject({
@@ -1189,7 +1185,7 @@ describe('Endpoint: /todos/:id:', () => {
             roles: ['INVALID ROLE'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
-            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d'
+            azp: '11bfa11a-7a1b-4c00-a6b1-eafdcf1d389d',
           },
           '00000000-0000-0000-0000-000000000000'
         )}`,
@@ -1197,14 +1193,14 @@ describe('Endpoint: /todos/:id:', () => {
         params: {
           id: 1,
         },
-      }
+      };
 
       const outputs = {
         status: 403,
         body: {
-          message: 'User not allowed.'
-        }
-      }
+          message: 'User not allowed.',
+        },
+      };
 
       // trigger
       const response = await app.inject({
@@ -1226,7 +1222,7 @@ describe('Endpoint: /todos/:id:', () => {
         authorization: `Bearer ${await jwt.sign(
           {
             oid: '00000000-0000-0000-0000-000000000000',
-            scp: 'Todos.Read',
+            scp: 'Todos.Manage',
             roles: ['Administrator'],
             preferred_username: 'administrator@claconnect.com',
             name: 'CLA Administrator',
